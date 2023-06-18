@@ -141,7 +141,6 @@
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  display: none;
 }
 
 hr {
@@ -164,11 +163,26 @@ hr {
   border-radius: 0.4rem;
   background: #cad5e2;
   font-weight: 600;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .active {
   background-color: #1b98f5;
   color: #ffffff;
+}
+
+/* budget list */
+.budget-list{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.budget{
+  background-color: #CAD5E2;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
 }
 
 @media (max-width: 850px) {
@@ -200,10 +214,6 @@ hr {
 
   .add-button {
     display: block;
-  }
-
-  .tick {
-    display: none !important;
   }
 }
 
