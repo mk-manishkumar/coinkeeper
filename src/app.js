@@ -1,9 +1,20 @@
 const selectElement = document.getElementById("expenseType");
 selectElement.options[0].disabled = true;
 
-selectElement.addEventListener("change", () => {
-  console.log(selectElement.value);
-});
+function chooseExpense() {
+  let expenseChoice = selectElement.value;
+
+  if (expenseChoice === "Expense Type") {
+    alert("Choose expense type");
+    selectElement.selectedIndex = 0;
+    selectElement.options[0].disabled = true;
+  } else {
+    selectElement.options[0].disabled = false;
+    return expenseChoice;
+  }
+}
+
+selectElement.addEventListener("change", chooseExpense);
 
 // to display month and year
 function monthYear() {
@@ -52,7 +63,57 @@ toggleTickAndText();
 
 window.addEventListener("resize", toggleTickAndText);
 
+// budget list
+let expenses = [];
+const budgetList = document.querySelector(".budget-list");
+const budgetDesc = document.querySelector(".description");
+const budgetAmount = document.querySelector(".amount");
+budgetList.innerHTML = "";
+
+function showExpenses() {
+  let choice = chooseExpense();
+  console.log(choice);
+
+  let content = "";
+
+  if (
+    choice !== undefined &&
+    budgetDesc.value !== "" &&
+    budgetAmount.value !== ""
+  ) {
+    if (budgetAmount.value > 0) {
+      content = `
+      <div class="budget">
+        <p>${fullDate()}</p>
+        <p class="desc">${budgetDesc.value}</p>
+        <p>₹${budgetAmount.value}</p>
+        <i class="fa-sharp fa-solid fa-trash"></i>
+      </div>
+    `;
+
+      if (choice === "expenditure") {
+        content.style.color = "red";
+      }
+      budgetList.innerHTML += content;
+    } else {
+      alert("Amount can't be less than 1");
+    }
+  } else if (choice === undefined) {
+    return;
+  } else if (budgetDesc.value === "") {
+    alert("Please fill description");
+  } else {
+    alert("Please fill amount");
+  }
+}
+
 // tick-icon event-listener
 tickIcon.addEventListener("click", () => {
   showExpenses();
+  if (budgetAmount.value !== "" && budgetAmount.value > 0) {
+    budgetDesc.value = "";
+    budgetAmount.value = "";
+  } else {
+    budgetAmount.value = "";
+  }
 });

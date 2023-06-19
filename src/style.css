@@ -56,12 +56,12 @@
   color: #1c8d73;
 }
 
-.tagline{
+.tagline {
   display: flex;
   margin-top: 2rem;
 }
 
-.tagline h4{
+.tagline h4 {
   font-family: "Cedarville Cursive", cursive;
   font-size: 2rem;
   margin: auto;
@@ -172,17 +172,28 @@ hr {
 }
 
 /* budget list */
-.budget-list{
+.budget-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.budget{
-  background-color: #CAD5E2;
+.budget {
+  background-color: #f4f4f4;
   display: flex;
   justify-content: space-between;
   padding: 0.5rem;
+  align-items: center;
+  color: #1b98f5;
+  font-weight: 600;
+}
+
+.budget i{
+  color: #000;
+}
+
+.desc {
+  width: 25rem;
 }
 
 @media (max-width: 850px) {
@@ -214,6 +225,15 @@ hr {
 
   .add-button {
     display: block;
+  }
+
+  .budget {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .desc {
+    width: auto;
   }
 }
 
