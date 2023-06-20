@@ -1,3 +1,6 @@
+const totalAmount = document.querySelector(".amount-value");
+totalAmount.innerHTML = 0;
+
 const selectElement = document.getElementById("expenseType");
 selectElement.options[0].disabled = true;
 
@@ -82,19 +85,45 @@ function showExpenses() {
     budgetAmount.value !== ""
   ) {
     if (budgetAmount.value > 0) {
-      content = `
-      <div class="budget">
-        <p>${fullDate()}</p>
-        <p class="desc">${budgetDesc.value}</p>
-        <p>₹${budgetAmount.value}</p>
-        <i class="fa-sharp fa-solid fa-trash"></i>
-      </div>
-    `;
+      const budgetElement = document.createElement("div");
+      budgetElement.classList.add("budget");
 
-      if (choice === "expenditure") {
-        content.style.color = "red";
+      const dateElement = document.createElement("p");
+      dateElement.textContent = fullDate();
+
+      const descElement = document.createElement("p");
+      descElement.classList.add("desc");
+      descElement.textContent = budgetDesc.value;
+
+      const amountElement = document.createElement("p");
+      amountElement.textContent = `₹${budgetAmount.value}`;
+
+      const trashIcon = document.createElement("i");
+      trashIcon.classList.add("fa-sharp", "fa-solid", "fa-trash");
+
+      budgetElement.appendChild(dateElement);
+      budgetElement.appendChild(descElement);
+      budgetElement.appendChild(amountElement);
+      budgetElement.appendChild(trashIcon);
+
+      // for adding in total budget amount
+      budgetList.appendChild(budgetElement);
+      totalAmount.innerHTML =
+        Number(totalAmount.innerHTML) + Number(budgetAmount.value);
+
+      if (choice === "Expenditure") {
+        descElement.style.color = "#E21717";
+        amountElement.style.color = "#E21717";
+        dateElement.style.color = "#E21717";
+      } else if (choice === "Savings") {
+        descElement.style.color = "#22CB5C";
+        amountElement.style.color = "#22CB5C";
+        dateElement.style.color = "#22CB5C";
+      } else if (choice === "Investment") {
+        descElement.style.color = "#1b98f5";
+        amountElement.style.color = "#1b98f5";
+        dateElement.style.color = "#1b98f5";
       }
-      budgetList.innerHTML += content;
     } else {
       alert("Amount can't be less than 1");
     }
