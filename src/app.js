@@ -77,8 +77,6 @@ function showExpenses() {
   let choice = chooseExpense();
   console.log(choice);
 
-  let content = "";
-
   if (
     choice !== undefined &&
     budgetDesc.value !== "" &&
@@ -111,6 +109,10 @@ function showExpenses() {
       totalAmount.innerHTML =
         Number(totalAmount.innerHTML) + Number(budgetAmount.value);
 
+      expenses.push(budgetElement);
+      console.log(expenses);
+      
+
       if (choice === "Expenditure") {
         descElement.style.color = "#E21717";
         amountElement.style.color = "#E21717";
@@ -136,6 +138,11 @@ function showExpenses() {
   }
 }
 
+// Save expenses to local storage
+function saveExpensesToLocalStorage() {
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
 // tick-icon event-listener
 tickIcon.addEventListener("click", () => {
   showExpenses();
@@ -145,4 +152,16 @@ tickIcon.addEventListener("click", () => {
   } else {
     budgetAmount.value = "";
   }
+
+  saveExpensesToLocalStorage();
 });
+
+function retrieveExpensesFromLocalStorage() {
+  const storedExpenses = JSON.parse(localStorage.getItem("expenses"));
+  if (storedExpenses) {
+    expenses = storedExpenses;
+  }
+}
+
+// Call retrieveExpensesFromLocalStorage() on page load
+window.addEventListener("load", retrieveExpensesFromLocalStorage);
