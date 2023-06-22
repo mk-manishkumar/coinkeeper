@@ -149,28 +149,6 @@ hr {
   margin: 1.2rem 0;
 }
 
-.filter-section {
-  margin: 2rem auto;
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-}
-
-.filter-btns {
-  width: 7rem;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 0.4rem;
-  background: #cad5e2;
-  font-weight: 600;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-}
-
-.active {
-  background-color: #1b98f5;
-  color: #ffffff;
-}
-
 /* budget list */
 .budget-list {
   display: flex;
@@ -188,7 +166,7 @@ hr {
   font-weight: 600;
 }
 
-.budget i{
+.budget i {
   color: #000;
 }
 

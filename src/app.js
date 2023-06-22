@@ -77,55 +77,30 @@ function showExpenses() {
   let choice = chooseExpense();
   console.log(choice);
 
+  let content = "";
+
   if (
     choice !== undefined &&
     budgetDesc.value !== "" &&
     budgetAmount.value !== ""
   ) {
     if (budgetAmount.value > 0) {
-      const budgetElement = document.createElement("div");
-      budgetElement.classList.add("budget");
+      content = `
+      <div class="budget">
+        <p>${fullDate()}</p>
+        <p class="desc">${budgetDesc.value}</p>
+        <p>₹${budgetAmount.value}</p>
+        <i class="fa-sharp fa-solid fa-trash"></i>
+      </div>
+    `;
 
-      const dateElement = document.createElement("p");
-      dateElement.textContent = fullDate();
-
-      const descElement = document.createElement("p");
-      descElement.classList.add("desc");
-      descElement.textContent = budgetDesc.value;
-
-      const amountElement = document.createElement("p");
-      amountElement.textContent = `₹${budgetAmount.value}`;
-
-      const trashIcon = document.createElement("i");
-      trashIcon.classList.add("fa-sharp", "fa-solid", "fa-trash");
-
-      budgetElement.appendChild(dateElement);
-      budgetElement.appendChild(descElement);
-      budgetElement.appendChild(amountElement);
-      budgetElement.appendChild(trashIcon);
+      budgetList.innerHTML += content;
+      expenses.push(content);
+      console.log(expenses);
 
       // for adding in total budget amount
-      budgetList.appendChild(budgetElement);
       totalAmount.innerHTML =
         Number(totalAmount.innerHTML) + Number(budgetAmount.value);
-
-      expenses.push(budgetElement);
-      console.log(expenses);
-      
-
-      if (choice === "Expenditure") {
-        descElement.style.color = "#E21717";
-        amountElement.style.color = "#E21717";
-        dateElement.style.color = "#E21717";
-      } else if (choice === "Savings") {
-        descElement.style.color = "#22CB5C";
-        amountElement.style.color = "#22CB5C";
-        dateElement.style.color = "#22CB5C";
-      } else if (choice === "Investment") {
-        descElement.style.color = "#1b98f5";
-        amountElement.style.color = "#1b98f5";
-        dateElement.style.color = "#1b98f5";
-      }
     } else {
       alert("Amount can't be less than 1");
     }
@@ -138,11 +113,6 @@ function showExpenses() {
   }
 }
 
-// Save expenses to local storage
-function saveExpensesToLocalStorage() {
-  localStorage.setItem("expenses", JSON.stringify(expenses));
-}
-
 // tick-icon event-listener
 tickIcon.addEventListener("click", () => {
   showExpenses();
@@ -152,16 +122,4 @@ tickIcon.addEventListener("click", () => {
   } else {
     budgetAmount.value = "";
   }
-
-  saveExpensesToLocalStorage();
 });
-
-function retrieveExpensesFromLocalStorage() {
-  const storedExpenses = JSON.parse(localStorage.getItem("expenses"));
-  if (storedExpenses) {
-    expenses = storedExpenses;
-  }
-}
-
-// Call retrieveExpensesFromLocalStorage() on page load
-window.addEventListener("load", retrieveExpensesFromLocalStorage);
