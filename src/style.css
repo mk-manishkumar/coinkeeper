@@ -117,6 +117,7 @@
   border: 2px solid #535b5c;
   color: #535b5c;
   font-size: 1.1rem;
+  outline: none;
 }
 
 .input-group input:first-child {
@@ -172,6 +173,19 @@ hr {
 
 .desc {
   width: 25rem;
+  text-align: center;
+}
+
+.clear-section{
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.7rem 0;
+}
+
+#clear-all{
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 850px) {
@@ -215,14 +229,3 @@ hr {
   }
 }
 
-@media (max-width: 525px) {
-  .filter-section {
-    display: grid;
-    grid-template-columns: 2fr 2fr;
-    grid-gap: 1rem;
-  }
-
-  .filter-btns {
-    margin: auto;
-  }
-}

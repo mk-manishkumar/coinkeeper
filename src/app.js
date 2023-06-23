@@ -71,11 +71,13 @@ let expenses = [];
 const budgetList = document.querySelector(".budget-list");
 const budgetDesc = document.querySelector(".description");
 const budgetAmount = document.querySelector(".amount");
+const clearAll = document.querySelector("#clear-all");
+
 budgetList.innerHTML = "";
 
 function showExpenses() {
   let choice = chooseExpense();
-  console.log(choice);
+  clearAll.style.display = "inline";
 
   let content = "";
 
@@ -85,22 +87,25 @@ function showExpenses() {
     budgetAmount.value !== ""
   ) {
     if (budgetAmount.value > 0) {
-      content = `
+      const expense = `
       <div class="budget">
         <p>${fullDate()}</p>
         <p class="desc">${budgetDesc.value}</p>
         <p>₹${budgetAmount.value}</p>
-        <i class="fa-sharp fa-solid fa-trash"></i>
+        <i class="fa-sharp fa-solid fa-trash" id="delete"></i>
       </div>
     `;
 
+      content += expense;
       budgetList.innerHTML += content;
-      expenses.push(content);
-      console.log(expenses);
+      expenses.push(expense);
 
       // for adding in total budget amount
       totalAmount.innerHTML =
         Number(totalAmount.innerHTML) + Number(budgetAmount.value);
+
+      saveExpensesToLocalStorage(); // Update the stored expenses in local storage
+      deleteExpense(); // Add event listener to the delete icon
     } else {
       alert("Amount can't be less than 1");
     }
@@ -123,3 +128,72 @@ tickIcon.addEventListener("click", () => {
     budgetAmount.value = "";
   }
 });
+
+// delete expense function
+function deleteExpense() {
+  const deleteIcons = document.querySelectorAll(".fa-trash");
+  deleteIcons.forEach((del, index) => {
+    del.addEventListener("click", () => {
+      const deletedExpense = expenses[index];
+      const amount = Number(deletedExpense.match(/₹(\d+)/)[1]);
+
+      expenses.splice(index, 1);
+      budgetList.innerHTML = ""; // Clear the budget list
+      expenses.forEach((expense) => {
+        budgetList.innerHTML += expense;
+      });
+      saveExpensesToLocalStorage(); // Update the stored expenses in local storage
+
+      // Deduct the amount from totalAmount
+      totalAmount.innerHTML = Number(totalAmount.innerHTML) - amount;
+      toggleClearBtn();
+      deleteExpense();
+    });
+  });
+}
+
+// clear all event listener
+clearAll.addEventListener("click", () => {
+  budgetList.innerHTML = "";
+  localStorage.clear();
+  clearAll.style.display = "none";
+});
+
+function toggleClearBtn() {
+  if (budgetList.innerHTML === "" && expenses.length === 0) {
+    clearAll.style.display = "none";
+  } else {
+    clearAll.style.display = "inline";
+  }
+}
+
+toggleClearBtn();
+
+// for saving into local storage
+function saveExpensesToLocalStorage() {
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+}
+
+// to load expenses from local storage
+function loadExpensesFromLocalStorage() {
+  const storedExpenses = localStorage.getItem("expenses");
+
+  if (storedExpenses) {
+    expenses = JSON.parse(storedExpenses);
+
+    expenses.forEach((expense) => {
+      budgetList.innerHTML += expense;
+    });
+
+    // Update the total amount based on the loaded expenses
+    const total = expenses.reduce((sum, expense) => {
+      const amount = Number(expense.match(/₹(\d+)/)[1]);
+      return sum + amount;
+    }, 0);
+    totalAmount.innerHTML = total;
+
+    deleteExpense(); // Add event listener to the delete icon
+  }
+}
+
+loadExpensesFromLocalStorage();
