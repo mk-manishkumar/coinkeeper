@@ -176,16 +176,28 @@ hr {
   text-align: center;
 }
 
-.clear-section{
+.clear-section {
   display: flex;
   justify-content: flex-end;
   padding: 0.7rem 0;
 }
 
-#clear-all{
+#clear-all {
   font-weight: 800;
   font-size: 1.2rem;
   margin-bottom: 1rem;
+}
+
+.savings-color {
+  color: #00d84a;
+}
+
+.expenditure-color {
+  color: #e21717;
+}
+
+.investment-color {
+  color: #8d3daf;
 }
 
 @media (max-width: 850px) {
@@ -228,4 +240,3 @@ hr {
     width: auto;
   }
 }
-

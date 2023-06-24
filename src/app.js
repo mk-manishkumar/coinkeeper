@@ -8,7 +8,7 @@ function chooseExpense() {
   let expenseChoice = selectElement.value;
 
   if (expenseChoice === "Expense Type") {
-    alert("Choose expense type");
+    alert("Choose an expense type");
     selectElement.selectedIndex = 0;
     selectElement.options[0].disabled = true;
   } else {
@@ -45,6 +45,8 @@ function fullDate() {
 
 // for button-toggle
 const tickIcon = document.querySelector(".tick.add-button.fas.fa-check-circle");
+const leftHead = document.querySelector(".left-head");
+const rightHead = document.querySelector(".right-head");
 
 function toggleTickAndText() {
   if (window.innerWidth < 850) {
@@ -53,18 +55,56 @@ function toggleTickAndText() {
     tickIcon.classList.remove("fas");
     tickIcon.classList.remove("fa-check-circle");
     tickIcon.textContent = "ADD";
+    leftHead.innerHTML = "&#x1FA99;CoinKeeper";
+    rightHead.innerHTML = "";
   } else {
     tickIcon.classList.remove("add-button");
     tickIcon.classList.add("tick");
     tickIcon.classList.add("fas");
     tickIcon.classList.add("fa-check-circle");
     tickIcon.textContent = "";
+    leftHead.innerHTML = "Your Budget &#x1F4B0;";
+    rightHead.innerHTML = "&#x1FA99;CoinKeeper";
   }
 }
 
 toggleTickAndText();
 
 window.addEventListener("resize", toggleTickAndText);
+
+// function for changing color
+
+function changeColor(choice) {
+  const descValueElement = document.querySelector(".desc");
+  const amountValueElement = document.querySelector(".amount-values");
+  const dateElement = document.querySelector(".date");
+
+  if (choice === "Savings") {
+    descValueElement.classList.add("savings-color");
+    amountValueElement.classList.add("savings-color");
+    dateElement.classList.add("savings-color");
+    descValueElement.classList.remove("expenditure-color", "investment-color");
+    amountValueElement.classList.remove(
+      "expenditure-color",
+      "investment-color"
+    );
+    dateElement.classList.remove("expenditure-color", "investment-color");
+  } else if (choice === "Expenditure") {
+    descValueElement.classList.add("expenditure-color");
+    amountValueElement.classList.add("expenditure-color");
+    dateElement.classList.add("expenditure-color");
+    descValueElement.classList.remove("savings-color", "investment-color");
+    amountValueElement.classList.remove("savings-color", "investment-color");
+    dateElement.classList.remove("savings-color", "investment-color");
+  } else if (choice === "Investment") {
+    descValueElement.classList.add("investment-color");
+    amountValueElement.classList.add("investment-color");
+    dateElement.classList.add("investment-color");
+    descValueElement.classList.remove("savings-color", "expenditure-color");
+    amountValueElement.classList.remove("savings-color", "expenditure-color");
+    dateElement.classList.remove("savings-color", "expenditure-color");
+  }
+}
 
 // budget list
 let expenses = [];
@@ -89,9 +129,9 @@ function showExpenses() {
     if (budgetAmount.value > 0) {
       const expense = `
       <div class="budget">
-        <p>${fullDate()}</p>
+        <p class="date">${fullDate()}</p>
         <p class="desc">${budgetDesc.value}</p>
-        <p>₹${budgetAmount.value}</p>
+        <p class="amount-values">₹${budgetAmount.value}</p>
         <i class="fa-sharp fa-solid fa-trash" id="delete"></i>
       </div>
     `;
@@ -99,6 +139,9 @@ function showExpenses() {
       content += expense;
       budgetList.innerHTML += content;
       expenses.push(expense);
+
+      // for changing text-color
+      changeColor(choice);
 
       // for adding in total budget amount
       totalAmount.innerHTML =
@@ -112,9 +155,9 @@ function showExpenses() {
   } else if (choice === undefined) {
     return;
   } else if (budgetDesc.value === "") {
-    alert("Please fill description");
+    alert("Please fill the description");
   } else {
-    alert("Please fill amount");
+    alert("Please fill the amount");
   }
 }
 
@@ -162,7 +205,7 @@ clearAll.addEventListener("click", () => {
 function toggleClearBtn() {
   if (budgetList.innerHTML === "" && expenses.length === 0) {
     clearAll.style.display = "none";
-  } else {
+  } else if (expenses.length > 0) {
     clearAll.style.display = "inline";
   }
 }
@@ -193,6 +236,13 @@ function loadExpensesFromLocalStorage() {
     totalAmount.innerHTML = total;
 
     deleteExpense(); // Add event listener to the delete icon
+
+    // Call the changeColor function with the selected choice
+    const selectElement = document.getElementById("expenseType");
+    const choice = selectElement.value;
+    changeColor(choice);
+
+    toggleClearBtn();
   }
 }
 
