@@ -72,51 +72,17 @@ toggleTickAndText();
 
 window.addEventListener("resize", toggleTickAndText);
 
-// function for changing color
-
-function changeColor(choice) {
-  const descValueElement = document.querySelector(".desc");
-  const amountValueElement = document.querySelector(".amount-values");
-  const dateElement = document.querySelector(".date");
-
-  if (choice === "Savings") {
-    descValueElement.classList.add("savings-color");
-    amountValueElement.classList.add("savings-color");
-    dateElement.classList.add("savings-color");
-    descValueElement.classList.remove("expenditure-color", "investment-color");
-    amountValueElement.classList.remove(
-      "expenditure-color",
-      "investment-color"
-    );
-    dateElement.classList.remove("expenditure-color", "investment-color");
-  } else if (choice === "Expenditure") {
-    descValueElement.classList.add("expenditure-color");
-    amountValueElement.classList.add("expenditure-color");
-    dateElement.classList.add("expenditure-color");
-    descValueElement.classList.remove("savings-color", "investment-color");
-    amountValueElement.classList.remove("savings-color", "investment-color");
-    dateElement.classList.remove("savings-color", "investment-color");
-  } else if (choice === "Investment") {
-    descValueElement.classList.add("investment-color");
-    amountValueElement.classList.add("investment-color");
-    dateElement.classList.add("investment-color");
-    descValueElement.classList.remove("savings-color", "expenditure-color");
-    amountValueElement.classList.remove("savings-color", "expenditure-color");
-    dateElement.classList.remove("savings-color", "expenditure-color");
-  }
-}
-
 // budget list
 let expenses = [];
 const budgetList = document.querySelector(".budget-list");
 const budgetDesc = document.querySelector(".description");
 const budgetAmount = document.querySelector(".amount");
 const clearAll = document.querySelector("#clear-all");
-
+let choice;
 budgetList.innerHTML = "";
 
 function showExpenses() {
-  let choice = chooseExpense();
+  choice = chooseExpense();
   clearAll.style.display = "inline";
 
   let content = "";
@@ -139,9 +105,6 @@ function showExpenses() {
       content += expense;
       budgetList.innerHTML += content;
       expenses.push(expense);
-
-      // for changing text-color
-      changeColor(choice);
 
       // for adding in total budget amount
       totalAmount.innerHTML =
@@ -200,6 +163,7 @@ clearAll.addEventListener("click", () => {
   budgetList.innerHTML = "";
   localStorage.clear();
   clearAll.style.display = "none";
+  totalAmount.innerHTML = Number(0);
 });
 
 function toggleClearBtn() {
@@ -236,11 +200,6 @@ function loadExpensesFromLocalStorage() {
     totalAmount.innerHTML = total;
 
     deleteExpense(); // Add event listener to the delete icon
-
-    // Call the changeColor function with the selected choice
-    const selectElement = document.getElementById("expenseType");
-    const choice = selectElement.value;
-    changeColor(choice);
 
     toggleClearBtn();
   }
