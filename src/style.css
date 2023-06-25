@@ -172,7 +172,7 @@ hr {
 }
 
 .desc {
-  width: 25rem;
+  width: 15rem;
   text-align: center;
 }
 
@@ -186,6 +186,11 @@ hr {
   font-weight: 800;
   font-size: 1.2rem;
   margin-bottom: 1rem;
+}
+
+.budget-list-container {
+  height: 300px;
+  overflow-y: auto;
 }
 
 @media (max-width: 850px) {
@@ -226,5 +231,10 @@ hr {
 
   .desc {
     width: auto;
+  }
+
+  .budget-list-container {
+    height: auto;
+    overflow-y: none;
   }
 }

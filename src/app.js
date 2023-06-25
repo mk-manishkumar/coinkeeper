@@ -97,6 +97,7 @@ function showExpenses() {
       <div class="budget">
         <p class="date">${fullDate()}</p>
         <p class="desc">${budgetDesc.value}</p>
+        <strong>${choice}</strong>
         <p class="amount-values">₹${budgetAmount.value}</p>
         <i class="fa-sharp fa-solid fa-trash" id="delete"></i>
       </div>
