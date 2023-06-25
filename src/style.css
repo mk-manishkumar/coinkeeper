@@ -188,18 +188,6 @@ hr {
   margin-bottom: 1rem;
 }
 
-.savings-color {
-  color: #00d84a;
-}
-
-.expenditure-color {
-  color: #e21717;
-}
-
-.investment-color {
-  color: #8d3daf;
-}
-
 @media (max-width: 850px) {
   .container {
     flex-direction: column;
