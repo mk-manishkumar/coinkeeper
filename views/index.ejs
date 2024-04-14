@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="images/coin.png" type="image/x-icon" />
+    <title>&#128176; CoinKeeper - Keep track of your Finances</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/script.js" defer></script>
+    <script src="/controller.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- left side -->
+      <div class="left-side">
+        <div class="budget-info">
+          <h2 class="left-head">Your Budget &#x1F4B0;</h2>
+          <h3 class="month-year"></h3>
+          <div class="total-amount">
+            <div class="circle">
+              <span id="amount">₹<span class="amount-value"></span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tagline">
+          <h4>
+            Keep <br />
+            Track <br />
+            of your <br />
+            Finances
+          </h4>
+        </div>
+      </div>
+
+      <!-- right side -->
+      <div class="right-side">
+        <div class="coinkeeper-info">
+          <h1 class="right-head">&#x1FA99;CoinKeeper</h1>
+          <div class="dropdown">
+            <select id="expenseType">
+              <option class="options" disabled selected hidden>Expense Type</option>
+              <option class="options">Savings</option>
+              <option class="options">Expenditure</option>
+              <option class="options">Investment</option>
+            </select>
+          </div>
+          <h2>
+            <span style="color: #535b5c; font-weight: 400">Tracking Expenses</span>
+            <i class="fas fa-home"></i>
+          </h2>
+          <hr />
+          <div class="input-group">
+            <input type="text" placeholder="Description" class="description" />
+            <input type="number" placeholder="Amount" class="amount" />
+            <i class="fas fa-check-circle tick add-button" id="add-btn"></i>
+          </div>
+          <hr />
+        </div>
+
+        <!-- budget list -->
+        <div class="budget-list-container">
+          <div class="clear-section">
+            <i class="fa-sharp fa-regular fa-circle-xmark" id="clear-all"></i>
+          </div>
+          <div class="budget-list"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
