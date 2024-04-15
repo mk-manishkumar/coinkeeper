@@ -7,7 +7,6 @@
     <title>&#128176; CoinKeeper - Keep track of your Finances</title>
     <link rel="stylesheet" href="/style.css" />
     <script src="/script.js" defer></script>
-    <script src="/controller.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
@@ -38,24 +37,26 @@
       <div class="right-side">
         <div class="coinkeeper-info">
           <h1 class="right-head">&#x1FA99;CoinKeeper</h1>
-          <div class="dropdown">
-            <select id="expenseType">
-              <option class="options" disabled selected hidden>Expense Type</option>
-              <option class="options">Savings</option>
-              <option class="options">Expenditure</option>
-              <option class="options">Investment</option>
-            </select>
-          </div>
-          <h2>
-            <span style="color: #535b5c; font-weight: 400">Tracking Expenses</span>
-            <i class="fas fa-home"></i>
-          </h2>
-          <hr />
-          <div class="input-group">
-            <input type="text" placeholder="Description" class="description" />
-            <input type="number" placeholder="Amount" class="amount" />
-            <i class="fas fa-check-circle tick add-button" id="add-btn"></i>
-          </div>
+          <form action="/" method="POST" id="expenseForm">
+            <div class="dropdown">
+              <select id="expenseType" name="expense">
+                <option class="options" disabled selected hidden>Expense Type</option>
+                <option class="options" value="Savings">Savings</option>
+                <option class="options" value="Expenditure">Expenditure</option>
+                <option class="options" value="Investment">Investment</option>
+              </select>
+            </div>
+            <h2>
+              <span style="color: #535b5c; font-weight: 400">Tracking Expenses</span>
+              <i class="fas fa-home"></i>
+            </h2>
+            <hr />
+            <div class="input-group">
+              <input type="text" placeholder="Description" class="description" name="description" />
+              <input type="number" placeholder="Amount" class="amount" name="amount" />
+              <button type="submit" class="fas fa-check-circle tick add-button" id="add-btn"></button>
+            </div>
+          </form>
           <hr />
         </div>
 
