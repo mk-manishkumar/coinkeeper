@@ -12,6 +12,7 @@ const amountSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
+      maxlength: 8,
       validate: {
         validator: (value) => value > 0,
         message: "Amount must be a positive number",
