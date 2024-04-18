@@ -67,7 +67,9 @@ router.post("/", async (req, res) => {
       expense,
     });
 
-    res.redirect("/");
+    successRedirect: "/";
+    failureRedirect: "/";
+    failureFlash: true;
   } catch (error) {
     res.status(500).send(error.message);
   }
