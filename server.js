@@ -3,12 +3,15 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const flash = require("connect-flash");
 
 // Import router
 const router = require("./controller.js");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(flash());
 
 // Configure body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
