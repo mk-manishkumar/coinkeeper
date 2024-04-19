@@ -1,5 +1,5 @@
 const express = require("express");
-const amountModel = require("./models/amount.model.js");
+const amountModel = require("../models/amount.model");
 
 const router = express.Router();
 

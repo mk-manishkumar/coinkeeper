@@ -78,6 +78,14 @@
   font-weight: 800;
 }
 
+.alert-flash {
+  font-weight: bold;
+  color: red;
+  font-size: 1.5rem;
+  font-family: cursive;
+  margin-top: 1rem;
+}
+
 .coinkeeper-info {
   text-align: center;
 }
@@ -179,10 +187,12 @@ hr {
   margin-bottom: 1rem;
 }
 
-.buttons-section button{
+.buttons-section button {
   color: #fff;
   border: none;
+  border-radius: 5px;
   padding: 0.5rem 1rem;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
 #clear-all {
