@@ -23,6 +23,11 @@ const amountSchema = new mongoose.Schema(
       required: true,
       enum: ["Savings", "Expenditure", "Investment"],
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,

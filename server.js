@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
 const flash = require("connect-flash");
 
 // Import router
@@ -10,6 +11,15 @@ const router = require("./controller.js");
 
 const app = express();
 const port = process.env.PORT || 3000;
+const secretKey = process.env.SECRET_KEY;
+
+app.use(
+  session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 app.use(flash());
 
