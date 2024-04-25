@@ -14,12 +14,15 @@
       <!-- left side -->
       <div class="left-side">
         <div class="budget-info">
-          <h2 class="left-head">Your Budget &#x1F4B0;</h2>
+          <h2 class="left-head">Hello <%= fullname.split(' ')[0] %></h2>
           <h3 class="month-year"></h3>
           <div class="total-amount">
             <div class="circle">
               <span id="amount"><span class="amount-value"><%= totalAmount %></span></span>
             </div>
+            <form action="/logout" method="get" class="log-out">
+              <button type="submit">Log Out</button>
+            </form>
           </div>
         </div>
 
@@ -43,7 +46,7 @@
           <div class="alert-flash"><%= errorMessage %></div>
           <% } %>
 
-          <form action="/" method="POST" id="expenseForm">
+          <form action="/profile" method="POST" id="expenseForm">
             <div class="dropdown">
               <select id="expenseType" name="expense" required>
                 <option class="options" disabled selected hidden>Expense Type</option>

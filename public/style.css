@@ -56,6 +56,18 @@
   color: #1c8d73;
 }
 
+.log-out{
+  margin-top: 2rem;
+}
+
+.log-out button{
+  background-color: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 0.3rem 1rem;
+  font-size: 1.2rem;
+}
+
 .tagline {
   display: flex;
   margin-top: 2rem;
