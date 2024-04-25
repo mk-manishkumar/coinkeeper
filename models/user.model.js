@@ -8,10 +8,21 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    password: {
+    fullname: {
       type: String,
       required: true,
     },
+    password: {
+      type: String,
+      required: true,
+      minlength: 4,
+    },
+    amounts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Amount",
+      },
+    ],
   },
   {
     timestamps: true,

@@ -1,62 +1,99 @@
 const express = require("express");
 const amountModel = require("../models/amount.model");
+const userModel = require("../models/user.model");
+const bcrypt = require("bcrypt");
+const { getBackgroundColor, calculateTotals } = require("../utils/utils.js");
 
 const router = express.Router();
 
-// to get background color for each expense
-function getBackgroundColor(expenseType) {
-  switch (expenseType) {
-    case "Savings":
-      return "green";
-    case "Expenditure":
-      return "red";
-    case "Investment":
-      return "#2A324B";
-  }
-}
+// to get register page
+router.get("/register", (req, res) => {
+  const errorMessage = req.flash("error");
+  res.render("register", { errorMessage });
+});
 
-// for calculating total of each expenses
-function calculateTotals(expenses) {
-  let savingsTotal = 0;
-  let expenditureTotal = 0;
-  let investmentTotal = 0;
+// for registering
+router.post("/register", async (req, res) => {
+  try {
+    const { username, fullname, password } = req.body;
 
-  expenses.forEach((expense) => {
-    switch (expense.expense) {
-      case "Savings":
-        savingsTotal += expense.amount;
-        break;
-      case "Expenditure":
-        expenditureTotal += expense.amount;
-        break;
-      case "Investment":
-        investmentTotal += expense.amount;
-        break;
+    // Check password length
+    if (password.length < 4) {
+      req.flash("error", "Password must be at least 4 characters long");
+      return res.redirect("/register");
     }
-  });
 
-  return {
-    savingsTotal: savingsTotal,
-    expenditureTotal: expenditureTotal,
-    investmentTotal: investmentTotal,
-  };
-}
+    // Check if the user already exists
+    const existingUser = await userModel.findOne({ username });
+    if (existingUser) {
+      req.flash("error", "Username already exists");
+      return res.redirect("/register");
+    }
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create a new user
+    const newUser = new userModel({
+      username,
+      fullname,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+
+    req.flash("success", "Registration successful, please login");
+    res.redirect("/");
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect("/register");
+  }
+});
+
+// for login
+router.post("/", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Check if the user exists
+    const user = await userModel.findOne({ username });
+    if (!user) {
+      req.flash("error", "User doesn't exist");
+      return res.redirect("/");
+    }
+
+    // Check if password is correct
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      req.flash("error", "Invalid password");
+      return res.redirect("/");
+    }
+
+    // Login successful
+    req.session.user = user;
+    res.redirect("/profile");
+  } catch (error) {
+    req.flash("error", error.message);
+    res.redirect("/");
+  }
+});
 
 // add expenses
-router.post("/", async (req, res) => {
+router.post("/profile", async (req, res) => {
   try {
     const { description, amount, expense } = req.body;
 
     if (expense === undefined) {
       req.flash("error", "*Enter the expense type");
-      return res.redirect("/");
+      return res.redirect("/profile");
     }
 
     const parsedAmount = +amount;
 
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       req.flash("error", "Amount must be a positive number");
-      return res.redirect("/");
+      return res.redirect("/profile");
     }
 
     const newExpense = await amountModel.create({
@@ -65,7 +102,7 @@ router.post("/", async (req, res) => {
       expense,
     });
 
-    res.redirect("/");
+    res.redirect("/profile");
   } catch (error) {
     req.flash("error", error.message);
     res.status(500).send(error.message);
@@ -73,7 +110,7 @@ router.post("/", async (req, res) => {
 });
 
 // display all expenses
-router.get("/", async (req, res) => {
+router.get("/profile", async (req, res) => {
   try {
     const expenses = await amountModel.find();
 
@@ -84,6 +121,12 @@ router.get("/", async (req, res) => {
 
     const errorMessage = req.flash("error");
 
+    const fullname = req.userModel ? req.userModel.fullname : "";
+    console.log(fullname);
+
+    // Clear flash messages after retrieving them
+    req.flash("error", null);
+
     res.render("index", {
       expenses,
       totalAmount,
@@ -92,9 +135,11 @@ router.get("/", async (req, res) => {
       expenditureTotal: totals.expenditureTotal,
       investmentTotal: totals.investmentTotal,
       errorMessage: errorMessage.length > 0 ? errorMessage : null,
+      fullname: fullname,
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    req.flash("error", "Internal Server Error");
+    res.redirect("/profile");
   }
 });
 
@@ -103,7 +148,7 @@ router.post("/clear-all", async (req, res) => {
   try {
     await amountModel.deleteMany({});
 
-    res.redirect("/");
+    res.redirect("/profile");
   } catch (error) {
     res.status(500).json({
       message: "Failed to clear database",
@@ -121,6 +166,25 @@ router.delete("/delete/:id", async (req, res) => {
     console.error("Error deleting expense:", error);
     res.json({ success: false, message: "Failed to delete expense" });
   }
+});
+
+// Logout route
+router.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error("Error logging out:", err);
+      return res.redirect("/");
+    }
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.redirect("/");
+      }
+
+      res.redirect("/");
+    });
+  });
 });
 
 module.exports = router;

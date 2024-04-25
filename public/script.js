@@ -72,34 +72,3 @@ function checkScreenWidth() {
 }
 
 window.addEventListener("resize", checkScreenWidth);
-
-// for filtering expenses
-document.addEventListener("DOMContentLoaded", () => {
-  const expenseList = document.getElementById("expense-list");
-  const savingBtn = document.getElementById("saving-btn");
-  const expenditureBtn = document.getElementById("expenditure-btn");
-  const investmentBtn = document.getElementById("investment-btn");
-
-  function filterExpenses(type) {
-    const listItems = expenseList.querySelectorAll("li");
-    listItems.forEach((item) => {
-      if (item.getAttribute("data-type") === type || type === "all") {
-        item.style.display = "block";
-      } else {
-        item.style.display = "none";
-      }
-    });
-  }
-
-  savingBtn.addEventListener("click", () => {
-    filterExpenses("Savings");
-  });
-
-  expenditureBtn.addEventListener("click", () => {
-    filterExpenses("Expenditure");
-  });
-
-  investmentBtn.addEventListener("click", () => {
-    filterExpenses("Investment");
-  });
-});
