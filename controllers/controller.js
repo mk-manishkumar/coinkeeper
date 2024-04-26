@@ -112,6 +112,13 @@ router.post("/profile", async (req, res) => {
 // display all expenses
 router.get("/profile", async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user) {
+      // If user is not authenticated, redirect to login page
+      req.flash("error", "You must be logged in to view this page");
+      return res.redirect("/");
+    }
+
     const expenses = await amountModel.find();
 
     let totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
@@ -121,8 +128,7 @@ router.get("/profile", async (req, res) => {
 
     const errorMessage = req.flash("error");
 
-    const fullname = req.userModel ? req.userModel.fullname : "";
-    console.log(fullname);
+    const fullname = req.user.fullname; // Access fullname from req.user
 
     // Clear flash messages after retrieving them
     req.flash("error", null);
@@ -139,7 +145,7 @@ router.get("/profile", async (req, res) => {
     });
   } catch (error) {
     req.flash("error", "Internal Server Error");
-    res.redirect("/profile");
+    res.redirect("/");
   }
 });
 
