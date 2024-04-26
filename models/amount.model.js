@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./user.model.js");
 
 const amountSchema = new mongoose.Schema(
   {
@@ -32,5 +33,15 @@ const amountSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Pre-save hook to update Amount's user field
+amountSchema.pre("save", async function (next) {
+  // If user is provided, update the user's amounts array
+  if (this.user) {
+    await User.findByIdAndUpdate(this.user, { $push: { amounts: this._id } });
+  }
+
+  next();
+});
 
 module.exports = mongoose.model("Amount", amountSchema);

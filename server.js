@@ -5,8 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const flash = require("connect-flash");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+const passport = require("./utils/passport.js");
 
 // Import router
 const router = require("./controllers/controller.js");
@@ -29,7 +28,7 @@ app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Initialize Passport
+// Initialize Passport and session middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -41,40 +40,15 @@ mongoose
   .then(() => console.log("MongoDB connected successfully."))
   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-// Configure Passport Local Strategy
-const userModel = require("./models/user.model");
-const bcrypt = require("bcrypt");
-
-passport.use(
-  new LocalStrategy(function (username, password, done) {
-    userModel.findOne({ username: username }, function (err, user) {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, { message: "User not found" });
-      }
-      bcrypt.compare(password, user.password, function (err, isMatch) {
-        if (err) throw err;
-        if (isMatch) {
-          return done(null, user);
-        } else {
-          return done(null, false, { message: "Incorrect password" });
-        }
-      });
-    });
+// Login route with Passport authentication middleware
+router.post(
+  "/",
+  passport.authenticate("local", {
+    successRedirect: "/profile",
+    failureRedirect: "/",
+    failureFlash: true,
   })
 );
-
-passport.serializeUser(function (user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function (id, done) {
-  userModel.findById(id, function (err, user) {
-    done(err, user);
-  });
-});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
