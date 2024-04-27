@@ -3,13 +3,13 @@ const amountModel = require("../models/amount.model");
 const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { getBackgroundColor, calculateTotals } = require("../utils/utils.js");
+const { createToken, authenticateUser } = require("../middlewares/middleware.js");
 
 const router = express.Router();
 
 // to get register page
 router.get("/register", (req, res) => {
-  const errorMessage = req.flash("error");
-  res.render("register", { errorMessage });
+  res.render("register");
 });
 
 // for registering
@@ -19,15 +19,13 @@ router.post("/register", async (req, res) => {
 
     // Check password length
     if (password.length < 4) {
-      req.flash("error", "Password must be at least 4 characters long");
-      return res.redirect("/register");
+      return res.status(400).send("Password must be at least 4 characters long");
     }
 
     // Check if the user already exists
     const existingUser = await userModel.findOne({ username });
     if (existingUser) {
-      req.flash("error", "Username already exists");
-      return res.redirect("/register");
+      return res.status(400).send("Username already exists");
     }
 
     // Hash the password
@@ -43,11 +41,9 @@ router.post("/register", async (req, res) => {
 
     await newUser.save();
 
-    req.flash("success", "Registration successful, please login");
-    res.redirect("/");
+    res.status(201).send("Registration successful, please login");
   } catch (error) {
-    req.flash("error", error.message);
-    res.redirect("/register");
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -56,26 +52,20 @@ router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Check if the user exists
-    const user = await userModel.findOne({ username });
+    // Check if the user exists and the password is correct
+    const user = await authenticateUser(username, password);
     if (!user) {
-      req.flash("error", "User doesn't exist");
-      return res.redirect("/");
+      return res.status(401).send("Invalid username or password");
     }
 
-    // Check if password is correct
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      req.flash("error", "Invalid password");
-      return res.redirect("/");
-    }
+    // If authentication is successful, generate a JWT token
+    const token = createToken(username, process.env.SECRET_KEY);
 
-    // Login successful
-    req.session.user = user;
+    // Redirect to the profile page after successful login
     res.redirect("/profile");
   } catch (error) {
-    req.flash("error", error.message);
-    res.redirect("/");
+    console.log(error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -85,15 +75,13 @@ router.post("/profile", async (req, res) => {
     const { description, amount, expense } = req.body;
 
     if (expense === undefined) {
-      req.flash("error", "*Enter the expense type");
-      return res.redirect("/profile");
+      return res.status(400).send("*Enter the expense type");
     }
 
     const parsedAmount = +amount;
 
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      req.flash("error", "Amount must be a positive number");
-      return res.redirect("/profile");
+      return res.status(400).send("Amount must be a positive number");
     }
 
     const newExpense = await amountModel.create({
@@ -104,8 +92,7 @@ router.post("/profile", async (req, res) => {
 
     res.redirect("/profile");
   } catch (error) {
-    req.flash("error", error.message);
-    res.status(500).send(error.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -114,9 +101,8 @@ router.get("/profile", async (req, res) => {
   try {
     // Check if user is authenticated
     if (!req.user) {
-      // If user is not authenticated, redirect to login page
-      req.flash("error", "You must be logged in to view this page");
-      return res.redirect("/");
+      // If user is not authenticated, return an error message
+      return res.status(401).send("You must be logged in to view this page");
     }
 
     const expenses = await amountModel.find();
@@ -144,8 +130,7 @@ router.get("/profile", async (req, res) => {
       fullname: fullname,
     });
   } catch (error) {
-    req.flash("error", "Internal Server Error");
-    res.redirect("/");
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -176,21 +161,7 @@ router.delete("/delete/:id", async (req, res) => {
 
 // Logout route
 router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error("Error logging out:", err);
-      return res.redirect("/");
-    }
-
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Error destroying session:", err);
-        return res.redirect("/");
-      }
-
-      res.redirect("/");
-    });
-  });
+  res.redirect("/");
 });
 
 module.exports = router;
