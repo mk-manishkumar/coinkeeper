@@ -41,11 +41,6 @@
         <div class="coinkeeper-info">
           <h1 class="right-head">&#x1FA99;CoinKeeper</h1>
 
-          <!-- Flash Messages -->
-          <% if (errorMessage) { %>
-          <div class="alert-flash"><%= errorMessage %></div>
-          <% } %>
-
           <form action="/profile" method="POST" id="expenseForm">
             <div class="dropdown">
               <select id="expenseType" name="expense" required>

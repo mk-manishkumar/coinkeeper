@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 // Import router
@@ -24,6 +23,10 @@ app.set("view engine", "ejs");
 
 // css and js file setup
 app.use(express.static(path.join(__dirname, "public")));
+
+// Parse URL-encoded and JSON request bodies
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Use router
 app.use(router);

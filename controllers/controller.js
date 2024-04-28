@@ -3,7 +3,7 @@ const amountModel = require("../models/amount.model");
 const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { getBackgroundColor, calculateTotals } = require("../utils/utils.js");
-const { createToken, authenticateUser } = require("../middlewares/middleware.js");
+const verifyToken = require("../middlewares/middleware.js");
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).send("Registration successful, please login");
+    res.redirect("/");
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -97,7 +97,7 @@ router.post("/profile", async (req, res) => {
 });
 
 // display all expenses
-router.get("/profile", async (req, res) => {
+router.get("/profile", verifyToken, async (req, res) => {
   try {
     // Check if user is authenticated
     if (!req.user) {
@@ -112,12 +112,7 @@ router.get("/profile", async (req, res) => {
     // for each expense
     const totals = calculateTotals(expenses);
 
-    const errorMessage = req.flash("error");
-
     const fullname = req.user.fullname; // Access fullname from req.user
-
-    // Clear flash messages after retrieving them
-    req.flash("error", null);
 
     res.render("index", {
       expenses,
@@ -126,7 +121,6 @@ router.get("/profile", async (req, res) => {
       savingsTotal: totals.savingsTotal,
       expenditureTotal: totals.expenditureTotal,
       investmentTotal: totals.investmentTotal,
-      errorMessage: errorMessage.length > 0 ? errorMessage : null,
       fullname: fullname,
     });
   } catch (error) {
