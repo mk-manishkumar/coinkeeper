@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 
 // Import router
 const router = require("./controllers/controller.js");
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Parse URL-encoded and JSON request bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Use router
 app.use(router);

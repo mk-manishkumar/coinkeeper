@@ -50,6 +50,9 @@
                 <option class="options" value="Investment">Investment</option>
               </select>
             </div>
+            <% if (typeof errorMessage !== 'undefined') { %>
+              <div style="color: red; margin-bottom: 30px;"><%= errorMessage %></div>
+            <% } %>
             <h2>
               <span style="color: #535b5c; font-weight: 400">Tracking Expenses</span>
               <i class="fas fa-home"></i>

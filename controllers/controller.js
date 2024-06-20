@@ -1,8 +1,9 @@
 const express = require("express");
-const amountModel = require("../models/amount.model");
-const userModel = require("../models/user.model");
+const amountModel = require("../models/amount.model.js");
+const userModel = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
-const { getBackgroundColor, calculateTotals } = require("../utils/utils.js");
+const jwt = require("jsonwebtoken");
+const { getBackgroundColor, calculateTotals, renderProfileWithError } = require("../utils/utils.js");
 const verifyToken = require("../middlewares/middleware.js");
 
 const router = express.Router();
@@ -52,17 +53,25 @@ router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Check if the user exists and the password is correct
-    const user = await authenticateUser(username, password);
+    const user = await userModel.findOne({ username });
     if (!user) {
       return res.status(401).send("Invalid username or password");
     }
 
-    // If authentication is successful, generate a JWT token
-    const token = createToken(username, process.env.SECRET_KEY);
+    // Check if password is correct
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send("Invalid username or password");
+    }
 
-    // Redirect to the profile page after successful login
-    res.redirect("/profile");
+    // If authentication is successful, generate a JWT token
+    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET);
+
+    // Set the token as a cookie
+    res.cookie("token", token, { httpOnly: true });
+
+    // Redirect to the profile page
+    res.redirect(`/profile?username=${username}`);
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
@@ -70,24 +79,27 @@ router.post("/", async (req, res) => {
 });
 
 // add expenses
-router.post("/profile", async (req, res) => {
+router.post("/profile", verifyToken, async (req, res) => {
   try {
     const { description, amount, expense } = req.body;
 
     if (expense === undefined) {
-      return res.status(400).send("*Enter the expense type");
+      return renderProfileWithError(res, req.username, "*Enter the expense type");
     }
 
     const parsedAmount = +amount;
 
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      return res.status(400).send("Amount must be a positive number");
+      return renderProfileWithError(res, req.username, "Amount must be a positive number");
     }
 
-    const newExpense = await amountModel.create({
+    const user = await userModel.findOne({ username: req.username }); // Get user
+
+    await amountModel.create({
       description,
       amount,
       expense,
+      user: user._id,
     });
 
     res.redirect("/profile");
@@ -99,20 +111,23 @@ router.post("/profile", async (req, res) => {
 // display all expenses
 router.get("/profile", verifyToken, async (req, res) => {
   try {
-    // Check if user is authenticated
-    if (!req.user) {
-      // If user is not authenticated, return an error message
+    const username = req.username;
+
+    if (!username) {
       return res.status(401).send("You must be logged in to view this page");
     }
 
-    const expenses = await amountModel.find();
+    const user = await userModel.findOne({ username });
+    if (!user) {
+      return res.status(401).send("User not found");
+    }
+
+    const expenses = await amountModel.find({ user: user._id });
 
     let totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
 
     // for each expense
     const totals = calculateTotals(expenses);
-
-    const fullname = req.user.fullname; // Access fullname from req.user
 
     res.render("index", {
       expenses,
@@ -121,7 +136,7 @@ router.get("/profile", verifyToken, async (req, res) => {
       savingsTotal: totals.savingsTotal,
       expenditureTotal: totals.expenditureTotal,
       investmentTotal: totals.investmentTotal,
-      fullname: fullname,
+      fullname: user.fullname,
     });
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -129,12 +144,26 @@ router.get("/profile", verifyToken, async (req, res) => {
 });
 
 // clear the database
-router.post("/clear-all", async (req, res) => {
+router.post("/clear-all", verifyToken, async (req, res) => {
   try {
-    await amountModel.deleteMany({});
+    // Find the user by username
+    const user = await userModel.findOne({ username: req.username });
 
+    if (!user) {
+      return res.status(401).send("User not found");
+    }
+
+    // Delete all amounts for the user
+    await amountModel.deleteMany({ user: user._id });
+
+    // Clear the user's amounts array
+    user.amounts = [];
+    await user.save();
+
+    // Redirect to the profile page
     res.redirect("/profile");
   } catch (error) {
+    console.error("Failed to clear database:", error);
     res.status(500).json({
       message: "Failed to clear database",
     });
@@ -142,10 +171,13 @@ router.post("/clear-all", async (req, res) => {
 });
 
 // delete expense by ID
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    await amountModel.findByIdAndDelete(id);
+    const deletedExpense = await amountModel.findOneAndDelete({ _id: id });
+    if (!deletedExpense) {
+      return res.status(404).json({ success: false, message: "Expense not found" });
+    }
     res.json({ success: true });
   } catch (error) {
     console.error("Error deleting expense:", error);
@@ -155,6 +187,7 @@ router.delete("/delete/:id", async (req, res) => {
 
 // Logout route
 router.get("/logout", (req, res) => {
+  res.clearCookie("token");
   res.redirect("/");
 });
 
