@@ -1,3 +1,6 @@
+const userModel = require("../models/user.model.js");
+const amountModel = require("../models/amount.model.js");
+
 // to get background color for each expense
 function getBackgroundColor(expenseType) {
   switch (expenseType) {
@@ -37,7 +40,27 @@ function calculateTotals(expenses) {
   };
 }
 
+// Helper function to render profile with error
+async function renderProfileWithError(res, username, errorMessage) {
+  const user = await userModel.findOne({ username });
+  const expenses = await amountModel.find({ user: user._id });
+  const totals = calculateTotals(expenses);
+  const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
+
+  res.render("index", {
+    expenses,
+    totalAmount,
+    getBackgroundColor,
+    savingsTotal: totals.savingsTotal,
+    expenditureTotal: totals.expenditureTotal,
+    investmentTotal: totals.investmentTotal,
+    fullname: user.fullname,
+    errorMessage,
+  });
+}
+
 module.exports = {
   getBackgroundColor,
   calculateTotals,
+  renderProfileWithError,
 };

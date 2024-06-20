@@ -1,22 +1,30 @@
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  console.error("JWT_SECRET is not defined in environment variables.");
+  process.exit(1);
+}
 
 // Function to verify JWT token
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Unauthorized");
+function verifyToken(req, res, next) {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized - Token not provided" });
   }
 
-  const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded; // Set req.user with decoded user information
-    next();
+    const decodedValue = jwt.verify(token, JWT_SECRET);
+    if (decodedValue.username) {
+      req.username = decodedValue.username;
+      next();
+    } else {
+      res.status(403).json({ message: "You are not authenticated" });
+    }
   } catch (error) {
-    console.error("Error verifying token:", error);
-    res.status(403).send("Forbidden");
+    res.status(401).json({ message: "Unauthorized - Invalid token" });
   }
-};
+}
 
 module.exports = verifyToken;

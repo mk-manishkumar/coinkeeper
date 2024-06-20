@@ -44,4 +44,12 @@ amountSchema.pre("save", async function (next) {
   next();
 });
 
+// Post-delete hook to remove reference from user's amounts array
+amountSchema.post("findOneAndDelete", async function (doc, next) {
+  if (doc.user) {
+    await User.findByIdAndUpdate(doc.user, { $pull: { amounts: doc._id } });
+  }
+  next();
+});
+
 module.exports = mongoose.model("Amount", amountSchema);
