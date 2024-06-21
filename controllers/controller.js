@@ -18,22 +18,18 @@ router.post("/register", async (req, res) => {
   try {
     const { username, fullname, password } = req.body;
 
-    // Check password length
     if (password.length < 4) {
-      return res.status(400).send("Password must be at least 4 characters long");
+      return res.redirect("/register?errorMessage=" + encodeURIComponent("Password must be at least 4 characters long"));
     }
 
-    // Check if the user already exists
     const existingUser = await userModel.findOne({ username });
     if (existingUser) {
-      return res.status(400).send("Username already exists");
+      return res.redirect("/register?errorMessage=" + encodeURIComponent("Username already exists"));
     }
 
-    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create a new user
     const newUser = new userModel({
       username,
       fullname,
@@ -41,10 +37,9 @@ router.post("/register", async (req, res) => {
     });
 
     await newUser.save();
-
     res.redirect("/");
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.redirect("/register?errorMessage=" + encodeURIComponent("Internal Server Error"));
   }
 });
 
@@ -55,26 +50,20 @@ router.post("/", async (req, res) => {
 
     const user = await userModel.findOne({ username });
     if (!user) {
-      return res.status(401).send("Invalid username or password");
+      return res.redirect("/?errorMessage=" + encodeURIComponent("Invalid Username"));
     }
 
-    // Check if password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).send("Invalid username or password");
+      return res.redirect("/?errorMessage=" + encodeURIComponent("Invalid Password"));
     }
 
-    // If authentication is successful, generate a JWT token
     const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET);
-
-    // Set the token as a cookie
     res.cookie("token", token, { httpOnly: true });
-
-    // Redirect to the profile page
     res.redirect(`/profile?username=${username}`);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal Server Error");
+    res.redirect("/?errorMessage=" + encodeURIComponent("Internal Server Error"));
   }
 });
 
@@ -143,7 +132,6 @@ router.get("/profile", verifyToken, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 // clear the database
 router.post("/clear-all", verifyToken, async (req, res) => {
