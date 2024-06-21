@@ -84,13 +84,13 @@ router.post("/profile", verifyToken, async (req, res) => {
     const { description, amount, expense } = req.body;
 
     if (expense === undefined) {
-      return renderProfileWithError(res, req.username, "*Enter the expense type");
+      return res.redirect("/profile?errorMessage=" + encodeURIComponent("Enter the expense type"));
     }
 
     const parsedAmount = +amount;
 
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      return renderProfileWithError(res, req.username, "Amount must be a positive number");
+      return res.redirect("/profile?errorMessage=" + encodeURIComponent("Amount must be a positive number"));
     }
 
     const user = await userModel.findOne({ username: req.username }); // Get user
@@ -112,6 +112,7 @@ router.post("/profile", verifyToken, async (req, res) => {
 router.get("/profile", verifyToken, async (req, res) => {
   try {
     const username = req.username;
+    const errorMessage = req.query.errorMessage || "";
 
     if (!username) {
       return res.status(401).send("You must be logged in to view this page");
@@ -126,7 +127,6 @@ router.get("/profile", verifyToken, async (req, res) => {
 
     let totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
 
-    // for each expense
     const totals = calculateTotals(expenses);
 
     res.render("index", {
@@ -137,11 +137,13 @@ router.get("/profile", verifyToken, async (req, res) => {
       expenditureTotal: totals.expenditureTotal,
       investmentTotal: totals.investmentTotal,
       fullname: user.fullname,
+      errorMessage: errorMessage,
     });
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 // clear the database
 router.post("/clear-all", verifyToken, async (req, res) => {
