@@ -1,22 +1,20 @@
-require("dotenv").config();
-const express = require("express");
-const path = require("path");
-const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
-
-// Import router
-const router = require("./controllers/controller.js");
+import "dotenv/config";
+import express from "express";
+import path, { dirname } from "path";
+import cookieParser from "cookie-parser";
+import { fileURLToPath } from "url";
+import router from "./controllers/controller.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Connect to MongoDB
-const uri = process.env.MONGODB_URI;
+// connect dB
+import connectDB from "./config/db.js";
+connectDB();
 
-mongoose
-  .connect(uri)
-  .then(() => console.log("MongoDB connected successfully."))
-  .catch((err) => console.error("Error connecting to MongoDB:", err));
+// Get the current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
