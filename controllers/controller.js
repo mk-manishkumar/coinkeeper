@@ -1,10 +1,10 @@
-const express = require("express");
-const amountModel = require("../models/amount.model.js");
-const userModel = require("../models/user.model.js");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { getBackgroundColor, calculateTotals, renderProfileWithError } = require("../utils/utils.js");
-const verifyToken = require("../middlewares/middleware.js");
+import express from "express";
+import amountModel from "../models/amount.model.js";
+import userModel from "../models/user.model.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { getBackgroundColor, calculateTotals, renderProfileWithError } from "../utils/utils.js";
+import { verifyToken } from "../middlewares/middleware.js";
 
 const router = express.Router();
 
@@ -165,6 +165,7 @@ router.delete("/delete/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const deletedExpense = await amountModel.findOneAndDelete({ _id: id });
+
     if (!deletedExpense) {
       return res.status(404).json({ success: false, message: "Expense not found" });
     }
@@ -181,4 +182,4 @@ router.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-module.exports = router;
+export default router;

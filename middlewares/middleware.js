@@ -1,4 +1,5 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
@@ -7,7 +8,7 @@ if (!JWT_SECRET) {
 }
 
 // Function to verify JWT token
-function verifyToken(req, res, next) {
+export function verifyToken(req, res, next) {
   const token = req.cookies.token;
 
   if (!token) {
@@ -26,5 +27,3 @@ function verifyToken(req, res, next) {
     res.status(401).json({ message: "Unauthorized - Invalid token" });
   }
 }
-
-module.exports = verifyToken;
