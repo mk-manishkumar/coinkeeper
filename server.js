@@ -28,10 +28,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 // import routes
-import authRoutes from "./routes/authRoutes.js";
+import authRouter from "./routes/authRoutes.js";
+import profileRouter from "./routes/profileRoutes.js";
 
 // Use router
-app.use("/", authRoutes);
+app.use("/", authRouter);
+app.use("/profile", profileRouter);
 
 // Handle 404 errors (not found)
 app.use((req, res, next) => {

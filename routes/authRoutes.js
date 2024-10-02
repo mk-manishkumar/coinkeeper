@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../middlewares/middleware";
+import { authMiddleware } from "../middlewares/middleware.js";
 
 const authRouter = express.Router();
 
@@ -8,6 +8,6 @@ authRouter.get("/", (req, res) => {
 });
 
 // Logout route
-authRouter.post("/logout", authMiddleware, logout);
+// authRouter.post("/logout", authMiddleware, logout);
 
 export default authRouter;
