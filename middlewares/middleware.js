@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
 }
 
 // Function to verify JWT token
-export function verifyToken(req, res, next) {
+export function authMiddleware(req, res, next) {
   const token = req.cookies.token;
 
   if (!token) {

@@ -3,7 +3,6 @@ import express from "express";
 import path, { dirname } from "path";
 import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
-import router from "./controllers/controller.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,13 +27,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+// import routes
+import authRoutes from "./routes/authRoutes.js";
+
 // Use router
-app.use(router);
+app.use("/", authRoutes);
 
-app.get("/", (req, res) => {
-  res.render("login");
+// Handle 404 errors (not found)
+app.use((req, res, next) => {
+  res.status(404).render("404", { message: "Page not found" });
 });
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render("error", { message: "Something went wrong!" });
 });
+
+app.listen(port, () => console.log(`App listening on port ${port}`));
