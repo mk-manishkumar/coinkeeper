@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const User = require("./user.model.js");
+import mongoose from "mongoose";
+import User from "./user.model.js";
 
 const amountSchema = new mongoose.Schema(
   {
@@ -36,20 +36,28 @@ const amountSchema = new mongoose.Schema(
 
 // Pre-save hook to update Amount's user field
 amountSchema.pre("save", async function (next) {
-  // If user is provided, update the user's amounts array
-  if (this.user) {
-    await User.findByIdAndUpdate(this.user, { $push: { amounts: this._id } });
+  try {
+    if (this.user) {
+      await User.findByIdAndUpdate(this.user, { $push: { amounts: this._id } });
+    }
+    next();
+  } catch (error) {
+    console.error("Error in pre-save hook:", error);
+    next(error);
   }
-
-  next();
 });
 
 // Post-delete hook to remove reference from user's amounts array
 amountSchema.post("findOneAndDelete", async function (doc, next) {
-  if (doc.user) {
-    await User.findByIdAndUpdate(doc.user, { $pull: { amounts: doc._id } });
+  try {
+    if (doc && doc.user) {
+      await User.findByIdAndUpdate(doc.user, { $pull: { amounts: doc._id } });
+    }
+    next();
+  } catch (error) {
+    console.error("Error in post-delete hook:", error);
+    next(error); // Pass the error to the next middleware
   }
-  next();
 });
 
-module.exports = mongoose.model("Amount", amountSchema);
+export default mongoose.model("Amount", amountSchema);

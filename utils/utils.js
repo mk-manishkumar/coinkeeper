@@ -1,8 +1,8 @@
-const userModel = require("../models/user.model.js");
-const amountModel = require("../models/amount.model.js");
+import userModel from "../models/user.model.js";
+import amountModel from "../models/amount.model.js";
 
-// to get background color for each expense
-function getBackgroundColor(expenseType) {
+// Get background color for each expense type
+export function getBackgroundColor(expenseType) {
   switch (expenseType) {
     case "Savings":
       return "green";
@@ -10,11 +10,13 @@ function getBackgroundColor(expenseType) {
       return "red";
     case "Investment":
       return "#2A324B";
+    default:
+      return "black"; 
   }
 }
 
-// for calculating total of each expenses
-function calculateTotals(expenses) {
+// Calculate total of each expense type
+export function calculateTotals(expenses) {
   let savingsTotal = 0;
   let expenditureTotal = 0;
   let investmentTotal = 0;
@@ -30,37 +32,42 @@ function calculateTotals(expenses) {
       case "Investment":
         investmentTotal += expense.amount;
         break;
+      default:
+        console.warn(`Unknown expense type: ${expense.expense}`);
     }
   });
 
   return {
-    savingsTotal: savingsTotal,
-    expenditureTotal: expenditureTotal,
-    investmentTotal: investmentTotal,
+    savingsTotal,
+    expenditureTotal,
+    investmentTotal,
   };
 }
 
 // Helper function to render profile with error
-async function renderProfileWithError(res, username, errorMessage) {
-  const user = await userModel.findOne({ username });
-  const expenses = await amountModel.find({ user: user._id });
-  const totals = calculateTotals(expenses);
-  const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
+export async function renderProfileWithError(res, username, errorMessage) {
+  try {
+    const user = await userModel.findOne({ username });
+    if (!user) {
+      throw new Error("User not found");
+    }
 
-  res.render("index", {
-    expenses,
-    totalAmount,
-    getBackgroundColor,
-    savingsTotal: totals.savingsTotal,
-    expenditureTotal: totals.expenditureTotal,
-    investmentTotal: totals.investmentTotal,
-    fullname: user.fullname,
-    errorMessage,
-  });
+    const expenses = await amountModel.find({ user: user._id });
+    const totals = calculateTotals(expenses);
+    const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
+
+    res.render("index", {
+      expenses,
+      totalAmount,
+      getBackgroundColor,
+      savingsTotal: totals.savingsTotal,
+      expenditureTotal: totals.expenditureTotal,
+      investmentTotal: totals.investmentTotal,
+      fullname: user.fullname,
+      errorMessage,
+    });
+  } catch (error) {
+    console.error("Error rendering profile:", error);
+    res.status(500).send("Internal Server Error");
+  }
 }
-
-module.exports = {
-  getBackgroundColor,
-  calculateTotals,
-  renderProfileWithError,
-};
