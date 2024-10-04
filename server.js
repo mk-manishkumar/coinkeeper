@@ -36,9 +36,9 @@ app.use("/", authRouter);
 app.use("/profile", profileRouter);
 
 // Handle 404 errors (not found)
-app.use((req, res, next) => {
-  res.status(404).render("404", { message: "Page not found" });
-});
+// app.use((req, res, next) => {
+//   res.status(404).render("404", { message: "Page not found" });
+// });
 
 // Global error handler
 app.use((err, req, res, next) => {
