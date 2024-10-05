@@ -1,13 +1,10 @@
-import express from "express";
-import Amount from "../models/amount.model.js";
 import User from "../models/user.model.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userRegisterSchema } from "../utils/zodValidation.js";
-import { getBackgroundColor, calculateTotals, renderProfileWithError } from "../utils/utils.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// registering new account
 export const register = async (req, res) => {
   try {
     const { username, fullname, password } = userRegisterSchema.parse(req.body);
@@ -32,6 +29,7 @@ export const register = async (req, res) => {
   }
 };
 
+// login into an account
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -54,6 +52,7 @@ export const login = async (req, res) => {
   }
 };
 
+// logout controller
 export const logout = async (req, res) => {
   try {
     res.clearCookie("token");

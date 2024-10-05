@@ -15,7 +15,7 @@
       <div class="left-side">
         <div class="budget-info">
           <h2 class="left-head">Hello <%= fullname.split(' ')[0] %></h2>
-          <h3 class="month-year"></h3>
+          <h3 class="month-year">JS code</h3>
           <div class="total-amount">
             <div class="circle">
               <span id="amount"><span class="amount-value"><%= totalAmount %></span></span>
@@ -41,7 +41,7 @@
         <div class="coinkeeper-info">
           <h1 class="right-head">&#x1FA99;CoinKeeper</h1>
 
-          <form action="/profile" method="POST" id="expenseForm">
+          <form action="/profile/addamount" method="POST" id="expenseForm">
             <div class="dropdown">
               <select id="expenseType" name="expense" required>
                 <option class="options" disabled selected hidden>Expense Type</option>

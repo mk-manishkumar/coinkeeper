@@ -56,7 +56,7 @@ amountSchema.post("findOneAndDelete", async function (doc, next) {
     next();
   } catch (error) {
     console.error("Error in post-delete hook:", error);
-    next(error); // Pass the error to the next middleware
+    next(error); 
   }
 });
 
