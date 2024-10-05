@@ -1,12 +1,16 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/middleware.js";
 import User from "../models/user.model.js";
-import { displayProfile } from "../controllers/profileController.js";
+import { displayProfile, addAmount } from "../controllers/profileController.js";
 
 const profileRouter = express.Router();
 
 profileRouter.use(authMiddleware);
 
+// route for displaying profile
 profileRouter.get("/:username", displayProfile);
+
+// route for adding new amount
+profileRouter.post("/addamount", addAmount);
 
 export default profileRouter;

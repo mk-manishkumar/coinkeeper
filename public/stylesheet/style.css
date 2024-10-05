@@ -66,6 +66,13 @@
   color: #ffffff;
   padding: 0.3rem 1rem;
   font-size: 1.2rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.log-out button:hover{
+  background-color: #000;
+  border: none;
 }
 
 .tagline {
