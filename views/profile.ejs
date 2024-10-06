@@ -51,7 +51,7 @@
               </select>
             </div>
             <% if (typeof errorMessage !== 'undefined') { %>
-              <div style="color: red; margin-bottom: 30px;"><%= errorMessage %></div>
+            <div style="color: red; margin-bottom: 30px"><%= errorMessage %></div>
             <% } %>
             <h2>
               <span style="color: #535b5c; font-weight: 400">Tracking Expenses</span>
@@ -77,7 +77,15 @@
           </div>
           <div class="budget-list">
             <ul class="budgetEl">
-              
+              <% expenses.forEach(expense => { %>
+              <li style="background-color: <%= getBackgroundColor(expense.expense) %>" data-id="<%= expense._id %>">
+                <span><%= new Date(expense.createdAt).toLocaleDateString('en-GB') %></span>
+                <span><%= expense.description %></span>
+                <span><%= expense.amount %></span>
+                <span><%= expense.expense %></span>
+                <i class="fa-sharp fa-solid fa-trash delete-icon"></i>
+              </li>
+              <% }); %>
             </ul>
           </div>
         </div>

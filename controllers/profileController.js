@@ -32,7 +32,24 @@ export const addAmount = async (req, res) => {
 
     // res.json({ newExpense });
 
-    return res.status(200).render("profile", { fullname: user.fullname, newExpense });
+    return res.status(200).redirect(`/profile/${user.username}`);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+};
+
+// display amount
+export const displayAmount = async (req, res) => {
+  try {
+    const username = req.params;
+
+    const user = await User.findOne(username);
+    if (!user) res.send("User doesn't exist");
+
+    const expenses = await Amount.find({ user: user._id });
+
+    return res.status(200).render("profile", { fullname: user.fullname, expenses, totalAmount: 0, savingsTotal: 0, expenditureTotal: 0, investmentTotal: 0 });
   } catch (error) {
     console.log(error);
     res.send(error);
