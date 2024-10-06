@@ -35,7 +35,7 @@ export const addAmount = async (req, res) => {
     return res.status(200).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);
-    res.send(error);
+    res.send(error); 
   }
 };
 
