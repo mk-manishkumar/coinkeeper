@@ -56,11 +56,11 @@
   color: #1c8d73;
 }
 
-.log-out{
+.log-out {
   margin-top: 2rem;
 }
 
-.log-out button{
+.log-out button {
   background-color: transparent;
   border: 2px solid #ffffff;
   color: #ffffff;
@@ -70,7 +70,7 @@
   user-select: none;
 }
 
-.log-out button:hover{
+.log-out button:hover {
   background-color: #000;
   border: none;
 }
@@ -89,7 +89,7 @@
 /* right side */
 .right-side {
   width: 70%;
-  background-color: white;
+  background-color: #c7d6e0;
   padding: 1.2rem;
 }
 
@@ -141,7 +141,6 @@
 .input-group input {
   flex: 1;
   padding: 0.5rem;
-  border: 2px solid #535b5c;
   color: #535b5c;
   font-size: 1.1rem;
   outline: none;

@@ -1,16 +1,3 @@
-// to display month and year
-function monthYear() {
-  const currentDate = new Date();
-  const month = currentDate.toLocaleString("default", { month: "long" });
-  const year = currentDate.getFullYear();
-
-  const currentMonthYear = `${month} ${year}`;
-  return currentMonthYear;
-}
-
-const displayMonthYear = document.querySelector(".month-year");
-displayMonthYear.innerHTML = monthYear();
-
 // to clear everything in dB
 
 document.getElementById("clear-all").addEventListener("click", async () => {
@@ -74,10 +61,10 @@ function checkScreenWidth() {
 window.addEventListener("resize", checkScreenWidth);
 
 // handling error message
-window.addEventListener("load", () => {
-  const url = new URL(window.location.href);
-  if (url.searchParams.has("errorMessage")) {
-    url.searchParams.delete("errorMessage");
-    window.history.replaceState({}, document.title, url.toString());
-  }
-});
+// window.addEventListener("load", () => {
+//   const url = new URL(window.location.href);
+//   if (url.searchParams.has("errorMessage")) {
+//     url.searchParams.delete("errorMessage");
+//     window.history.replaceState({}, document.title, url.toString());
+//   }
+// });

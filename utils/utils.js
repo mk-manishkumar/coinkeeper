@@ -11,7 +11,7 @@ export function getBackgroundColor(expenseType) {
     case "Investment":
       return "#2A324B";
     default:
-      return "black"; 
+      return "black";
   }
 }
 
@@ -69,5 +69,19 @@ export async function renderProfileWithError(res, username, errorMessage) {
   } catch (error) {
     console.error("Error rendering profile:", error);
     res.status(500).send("Internal Server Error");
+  }
+}
+
+// to display month and year
+export function monthYear() {
+  try {
+    const currentDate = new Date();
+    const month = currentDate.toLocaleString("default", { month: "long" });
+    const year = currentDate.getFullYear();
+
+    const currentMonthYear = `${month} ${year}`;
+    return currentMonthYear;
+  } catch (error) {
+    console.log(error);
   }
 }
