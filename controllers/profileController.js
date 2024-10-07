@@ -16,8 +16,6 @@ export const displayProfile = async (req, res) => {
 
     const totals = calculateTotals(expenses);
 
-    console.log(monthYear);
-
     return res.status(200).render("profile", {
       fullname: user.fullname,
       expenses,
@@ -57,5 +55,50 @@ export const addAmount = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.send(error);
+  }
+};
+
+// delete single expense
+export const deleteExpense = async (req, res) => {
+  try {
+    const username = req.username;
+    const expenseId = req.params.expenseId;
+
+    const user = await User.findOne({ username });
+    if (!user) res.send("User doesn't exist");
+
+    const expense = await Amount.findById(expenseId);
+    if (!expense) return res.status(404).send("Expense not found");
+
+    await Amount.findByIdAndDelete(expenseId);
+
+    await User.findByIdAndUpdate(user._id, { $pull: { amounts: expenseId } });
+
+    return res.status(200).redirect(`/profile/${user.username}`);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+};
+
+// delete all expenses
+export const deleteAllExpenses = async (req, res) => {
+  try {
+    const username = req.username;
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).send("User doesn't exist");
+
+    const expenses = await Amount.find({ user: user._id });
+    const expenseIds = expenses.map((expense) => expense._id);
+
+    await Amount.deleteMany({ user: user._id });
+
+    await User.findByIdAndUpdate(user._id, { $pull: { amounts: { $in: expenseIds } } });
+
+    return res.status(200).redirect(`/profile/${user.username}`);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
 };

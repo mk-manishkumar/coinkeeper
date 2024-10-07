@@ -8,7 +8,7 @@ const amountSchema = new mongoose.Schema(
       required: true,
       trim: true,
       minlength: 1,
-      maxlength: 25,
+      maxlength: 20,
     },
     amount: {
       type: Number,
@@ -44,19 +44,6 @@ amountSchema.pre("save", async function (next) {
   } catch (error) {
     console.error("Error in pre-save hook:", error);
     next(error);
-  }
-});
-
-// Post-delete hook to remove reference from user's amounts array
-amountSchema.post("findOneAndDelete", async function (doc, next) {
-  try {
-    if (doc && doc.user) {
-      await User.findByIdAndUpdate(doc.user, { $pull: { amounts: doc._id } });
-    }
-    next();
-  } catch (error) {
-    console.error("Error in post-delete hook:", error);
-    next(error); 
   }
 });
 

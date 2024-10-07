@@ -73,7 +73,9 @@
             <button style="background-color: green">Savings: <%= savingsTotal %></button>
             <button style="background-color: red">Expenditure: <%= expenditureTotal %></button>
             <button style="background-color: #2a324b">Investment: <%= investmentTotal %></button>
-            <i class="fa-sharp fa-regular fa-circle-xmark" id="clear-all"></i>
+            <form action="/profile/deleteallexpenses" method="post">
+              <button type="submit" class="fa-sharp fa-regular fa-circle-xmark" id="clear-all"></button>
+            </form>
           </div>
           <div class="budget-list">
             <ul class="budgetEl">
@@ -83,7 +85,9 @@
                 <span><%= expense.description %></span>
                 <span><%= expense.amount %></span>
                 <span><%= expense.expense %></span>
-                <i class="fa-sharp fa-solid fa-trash delete-icon"></i>
+                <form action="/profile/deleteexpense/<%= expense._id %>" method="post">
+                  <button type="submit" class="fa-sharp fa-solid fa-trash delete-icon"></button>
+                </form>
               </li>
               <% }); %>
             </ul>

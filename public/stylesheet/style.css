@@ -217,11 +217,20 @@ hr {
   font-weight: 800;
   font-size: 1.2rem;
   margin-bottom: 1rem;
+  background-color: transparent;
+  box-shadow: none;
+  color: #000;
 }
 
 .budget-list-container {
   height: 300px;
   overflow-y: auto;
+}
+
+.delete-icon{
+  border: none;
+  color: #ffffff;
+  background-color: transparent;
 }
 
 @media (max-width: 850px) {
