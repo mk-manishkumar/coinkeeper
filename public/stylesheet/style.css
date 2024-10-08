@@ -22,7 +22,7 @@
 
 .month-year {
   font-size: 1.5rem;
-  margin: 2rem auto;
+  margin: 1rem auto;
   border: 2px solid #ffffff;
   padding: 0.4rem 1.2rem;
 }
@@ -35,7 +35,7 @@
 }
 
 .total-amount {
-  margin-top: 1.2rem;
+  margin-top: 0.2rem;
 }
 
 .circle {
@@ -60,7 +60,8 @@
   margin-top: 2rem;
 }
 
-.log-out button {
+.log-out button,
+.delete-account button {
   background-color: transparent;
   border: 2px solid #ffffff;
   color: #ffffff;
@@ -70,6 +71,15 @@
   user-select: none;
 }
 
+.delete-account button{
+  margin-top: 1rem;
+}
+
+.delete-account button:hover{
+  background-color: rgb(252, 5, 5);
+  border: none;
+}
+
 .log-out button:hover {
   background-color: #000;
   border: none;
@@ -77,7 +87,6 @@
 
 .tagline {
   display: flex;
-  margin-top: 2rem;
 }
 
 .tagline h4 {
@@ -227,7 +236,7 @@ hr {
   overflow-y: auto;
 }
 
-.delete-icon{
+.delete-icon {
   border: none;
   color: #ffffff;
   background-color: transparent;

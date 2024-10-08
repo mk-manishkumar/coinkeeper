@@ -37,9 +37,9 @@ app.use(bodyParser.json());
 // Setup session middleware
 app.use(
   session({
-    secret: "your-secret-key",
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: 60000 },
   })
 );
@@ -57,13 +57,13 @@ app.use("/profile", profileRouter);
 
 // Handle 404 errors (not found)
 app.use((req, res, next) => {
-  res.status(404).render("404", { message: "Page not found" });
+  res.status(404).render("404");
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render("error", { message: "Something went wrong!" });
+  res.status(500).render("error");
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}`));

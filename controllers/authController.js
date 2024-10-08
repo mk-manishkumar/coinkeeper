@@ -13,11 +13,6 @@ export const register = async (req, res) => {
 
     const user = await User.findOne({ username });
 
-    if (!username || !password || !fullname) {
-      req.flash("error", "All fields are required.");
-      return res.status(400).redirect("/");
-    }
-
     if (user) {
       req.flash("error", "Username already exists");
       return res.status(400).redirect("/");
@@ -39,8 +34,29 @@ export const register = async (req, res) => {
       req.flash("error", errorMessages);
       return res.status(400).redirect("/");
     }
-
     // Handle other errors (e.g., database errors)
+    console.log(error);
+    return res.status(500).render("error");
+  }
+};
+
+// check authentication for registeration route
+export const checkAuth = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token || token === "") return res.status(201).render("register", { errorMessage: req.flash() });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const username = decoded.username;
+
+    const user = await User.findOne({ username });
+
+    if (!user) return res.send("User doesn't exist");
+
+    return res.status(201).redirect(`/profile/${user.username}`);
+  } catch (error) {
     console.log(error);
     return res.status(500).render("error");
   }
@@ -67,6 +83,28 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ username: user.username, id: user._id }, JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
+
+    return res.status(201).redirect(`/profile/${user.username}`);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).render("error");
+  }
+};
+
+// check authentication for login page
+export const checkLogin = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token || token === "") return res.status(201).render("login", { errorMessage: req.flash() });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const username = decoded.username;
+
+    const user = await User.findOne({ username });
+
+    if (!user) return res.send("User doesn't exist");
 
     return res.status(201).redirect(`/profile/${user.username}`);
   } catch (error) {
