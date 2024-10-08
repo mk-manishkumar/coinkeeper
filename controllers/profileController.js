@@ -5,9 +5,9 @@ import { getBackgroundColor, calculateTotals, monthYear } from "../utils/utils.j
 // display profile
 export const displayProfile = async (req, res) => {
   try {
-    const username = req.params;
+    const username = req.username;
 
-    const user = await User.findOne(username);
+    const user = await User.findOne({ username });
     if (!user) res.send("User doesn't exist");
 
     const expenses = await Amount.find({ user: user._id });
@@ -36,17 +36,12 @@ export const displayProfile = async (req, res) => {
 // add amount
 export const addAmount = async (req, res) => {
   try {
-    const username = req.params;
+    const username = req.username;
+
     const { description, amount, expense } = req.body;
 
-    const user = await User.findOne(username);
+    const user = await User.findOne({ username });
     if (!user) res.send("User doesn't exist");
-
-    if (isNaN(amount) || amount <= 0) {
-      return res.render("profile", {
-        errorMessage: "Amount must be a positive number",
-      });
-    }
 
     const newExpense = new Amount({ description, amount, expense, user: user._id });
     await newExpense.save();
