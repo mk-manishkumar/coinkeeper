@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { userRegisterSchema } from "../utils/zodValidation.js";
 import { hashPassword, comparePassword } from "../utils/passwordBcrypt.js";
+import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -12,7 +13,15 @@ export const register = async (req, res) => {
 
     const user = await User.findOne({ username });
 
-    if (user) return res.status(501).send("Username already exists");
+    if (!username || !password || !fullname) {
+      req.flash("error", "All fields are required.");
+      return res.status(400).redirect("/");
+    }
+
+    if (user) {
+      req.flash("error", "Username already exists");
+      return res.status(400).redirect("/");
+    }
 
     const hashedPassword = await hashPassword(password);
 
@@ -24,8 +33,16 @@ export const register = async (req, res) => {
 
     return res.status(201).redirect(`/profile/${newUser.username}`);
   } catch (error) {
+    // If validation fails, extract error messages
+    if (error instanceof z.ZodError) {
+      const errorMessages = error.errors.map((err) => err.message).join(", ");
+      req.flash("error", errorMessages);
+      return res.status(400).redirect("/");
+    }
+
+    // Handle other errors (e.g., database errors)
     console.log(error);
-    res.send(error);
+    return res.status(500).render("error");
   }
 };
 
@@ -36,11 +53,17 @@ export const login = async (req, res) => {
 
     const user = await User.findOne({ username });
 
-    if (!user) return res.status(401).send("Invalid username or password");
+    if (!user) {
+      req.flash("error", "Invalid credentials");
+      return res.status(400).redirect("/login");
+    }
 
     const isMatch = await comparePassword(password, user.password);
 
-    if (!isMatch) return res.status(401).send("Invalid username or password");
+    if (!isMatch) {
+      req.flash("error", "Invalid credentials");
+      return res.status(400).redirect("/login");
+    }
 
     const token = jwt.sign({ username: user.username, id: user._id }, JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
@@ -48,7 +71,7 @@ export const login = async (req, res) => {
     return res.status(201).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);
-    return res.status(500).send("An error occurred during login.");
+    return res.status(500).render("error");
   }
 };
 
@@ -56,9 +79,9 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     res.clearCookie("token");
-    res.redirect("/login");
+    res.status(200).redirect("/login");
   } catch (error) {
     console.log(error);
-    res.send(error);
+    res.status(500).render("error");
   }
 };

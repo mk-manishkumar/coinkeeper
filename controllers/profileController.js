@@ -25,11 +25,11 @@ export const displayProfile = async (req, res) => {
       savingsTotal: totals.savingsTotal,
       expenditureTotal: totals.expenditureTotal,
       investmentTotal: totals.investmentTotal,
-      errorMessage: "",
+      errorMessage: req.flash(),
     });
   } catch (error) {
     console.log(error);
-    res.send(error);
+    return res.status(500).render("error");
   }
 };
 
@@ -43,6 +43,28 @@ export const addAmount = async (req, res) => {
     const user = await User.findOne({ username });
     if (!user) res.send("User doesn't exist");
 
+    if (expense === undefined) {
+      req.flash("error", "Please select type of expense");
+      return res.status(511).redirect(`/profile/${user.username}`);
+    }
+
+    if (!description || !amount) {
+      req.flash("error", "Description and Amount are required");
+      return res.status(511).redirect(`/profile/${user.username}`);
+    }
+
+    if (description.length > 20) {
+      req.flash("error", "Description should be less than 20 characters");
+      return res.status(511).redirect(`/profile/${user.username}`);
+    }
+
+    let parsedAmount = parseInt(amount, 10);
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      req.flash("error", "Please enter a number greater than 0");
+      return res.status(511).redirect(`/profile/${user.username}`);
+    }
+
     const newExpense = new Amount({ description, amount, expense, user: user._id });
     await newExpense.save();
 
@@ -51,7 +73,7 @@ export const addAmount = async (req, res) => {
     return res.status(200).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);
-    res.send(error);
+    return res.status(500).render("error");
   }
 };
 
@@ -74,7 +96,7 @@ export const deleteExpense = async (req, res) => {
     return res.status(200).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);
-    res.send(error);
+    return res.status(500).render("error");
   }
 };
 
@@ -96,6 +118,6 @@ export const deleteAllExpenses = async (req, res) => {
     return res.status(200).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return res.status(500).render("error");
   }
 };

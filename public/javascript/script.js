@@ -14,11 +14,4 @@ function checkScreenWidth() {
 
 window.addEventListener("resize", checkScreenWidth);
 
-// handling error message
-// window.addEventListener("load", () => {
-//   const url = new URL(window.location.href);
-//   if (url.searchParams.has("errorMessage")) {
-//     url.searchParams.delete("errorMessage");
-//     window.history.replaceState({}, document.title, url.toString());
-//   }
-// });
+

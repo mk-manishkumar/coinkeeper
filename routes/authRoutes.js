@@ -6,12 +6,12 @@ const authRouter = express.Router();
 
 // display register page
 authRouter.get("/", (req, res) => {
-  res.render("register");
+  res.render("register", { errorMessage: req.flash() });
 });
 
 // display login page
 authRouter.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", { errorMessage: req.flash() });
 });
 
 // register logic route

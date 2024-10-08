@@ -15,6 +15,11 @@
         <div class="col-md-6">
           <form action="/login" method="POST" class="border rounded p-4" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px">
             <h3 class="text-center mb-4">Login</h3>
+
+            <% if (errorMessage.error) { %>
+            <div style="color: red; margin-bottom: 30px; font-weight: 600; text-align: center"><%= errorMessage.error %></div>
+            <% } %>
+
             <div id="error-message" class="alert alert-danger d-none"></div>
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
@@ -30,18 +35,5 @@
         </div>
       </div>
     </section>
-    <script>
-      window.addEventListener("load", () => {
-        const url = new URL(window.location.href);
-        const errorMessageElement = document.getElementById("error-message");
-        if (url.searchParams.has("errorMessage")) {
-          const errorMessage = url.searchParams.get("errorMessage");
-          errorMessageElement.textContent = errorMessage;
-          errorMessageElement.classList.remove("d-none");
-          url.searchParams.delete("errorMessage");
-          window.history.replaceState({}, document.title, url.toString());
-        }
-      });
-    </script>
   </body>
 </html>
