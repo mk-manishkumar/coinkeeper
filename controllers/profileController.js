@@ -51,6 +51,8 @@ export const addAmount = async (req, res) => {
     const newExpense = new Amount({ description, amount, expense, user: user._id });
     await newExpense.save();
 
+    await User.findByIdAndUpdate(user._id, { $push: { amounts: newExpense._id } });
+
     return res.status(200).redirect(`/profile/${user.username}`);
   } catch (error) {
     console.log(error);

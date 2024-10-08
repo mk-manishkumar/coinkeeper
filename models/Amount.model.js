@@ -34,17 +34,4 @@ const amountSchema = new mongoose.Schema(
   }
 );
 
-// Pre-save hook to update Amount's user field
-amountSchema.pre("save", async function (next) {
-  try {
-    if (this.user) {
-      await User.findByIdAndUpdate(this.user, { $push: { amounts: this._id } });
-    }
-    next();
-  } catch (error) {
-    console.error("Error in pre-save hook:", error);
-    next(error);
-  }
-});
-
 export default mongoose.model("Amount", amountSchema);
