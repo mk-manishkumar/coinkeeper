@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { userRegisterSchema } from "../utils/zodValidation.js";
+import { hashPassword, comparePassword } from "../utils/passwordBcrypt.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -10,14 +11,13 @@ export const register = async (req, res) => {
     const { username, fullname, password } = userRegisterSchema.parse(req.body);
 
     const user = await User.findOne({ username });
-    console.log(user);
 
     if (user) return res.status(501).send("Username already exists");
 
-    const newUser = new User({ username, fullname, password });
-    await newUser.save();
+    const hashedPassword = await hashPassword(password);
 
-    console.log(newUser);
+    const newUser = new User({ username, fullname, password: hashedPassword });
+    await newUser.save();
 
     const token = jwt.sign({ username: newUser.username, id: newUser._id }, JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
@@ -38,7 +38,7 @@ export const login = async (req, res) => {
 
     if (!user) return res.status(401).send("Invalid username or password");
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await comparePassword(password, user.password);
 
     if (!isMatch) return res.status(401).send("Invalid username or password");
 
