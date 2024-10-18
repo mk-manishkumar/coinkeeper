@@ -23,8 +23,8 @@
             <form action="/logout" method="post" class="log-out">
               <button type="submit">Log Out</button>
             </form>
-            <form action="/deleteaccount" method="post" class="delete-account">
-              <button type="submit">Delete Account</button>
+            <form id="deleteAccountForm" class="delete-account">
+              <button type="button" onclick="confirmDeleteAccount()">Delete Account</button>
             </form>
           </div>
         </div>
@@ -55,7 +55,7 @@
             </div>
 
             <% if (errorMessage.error) { %>
-            <div style="color: red; margin-bottom: 30px; font-weight: 600;"><%= errorMessage.error %></div>
+            <div style="color: red; margin-bottom: 30px; font-weight: 600"><%= errorMessage.error %></div>
             <% } %>
 
             <h2>

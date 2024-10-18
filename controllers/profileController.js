@@ -1,6 +1,7 @@
 import Amount from "../models/amount.model.js";
 import User from "../models/user.model.js";
 import { getBackgroundColor, calculateTotals, monthYear } from "../utils/utils.js";
+import { comparePassword } from "../utils/passwordBcrypt.js";
 
 // display profile
 export const displayProfile = async (req, res) => {
@@ -116,6 +117,34 @@ export const deleteAllExpenses = async (req, res) => {
     await User.findByIdAndUpdate(user._id, { $pull: { amounts: { $in: expenseIds } } });
 
     return res.status(200).redirect(`/profile/${user.username}`);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).render("error");
+  }
+};
+
+// delete account
+export const deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const username = req.username;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isMatch = await comparePassword(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: "Incorrect password" });
+    }
+
+    await User.deleteOne({ username });
+    res.clearCookie("token");
+
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
     return res.status(500).render("error");

@@ -14,4 +14,37 @@ function checkScreenWidth() {
 
 window.addEventListener("resize", checkScreenWidth);
 
+// account deletion
+async function confirmDeleteAccount() {
+  const password = prompt("Enter your password to delete the account:");
 
+  if (password) {
+    try {
+      const response = await fetch("/profile/deleteaccount", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }), 
+      });
+
+      // Check if the response is OK (status in the range 200-299)
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        window.location.href = "/"; 
+      } else {
+        alert("Password incorrect. Account not deleted.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while trying to delete the account."); 
+    }
+  } else {
+    alert("Password is required to delete the account."); 
+  }
+}

@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/middleware.js";
-import { displayProfile, addAmount, deleteExpense, deleteAllExpenses } from "../controllers/profileController.js";
+import { displayProfile, addAmount, deleteExpense, deleteAllExpenses, deleteAccount } from "../controllers/profileController.js";
 
 const profileRouter = express.Router();
 
@@ -17,5 +17,8 @@ profileRouter.post("/deleteexpense/:expenseId", deleteExpense);
 
 // route for deleting all expenses
 profileRouter.post("/deleteallexpenses", deleteAllExpenses);
+
+// route for deleting account
+profileRouter.post("/deleteaccount", deleteAccount);
 
 export default profileRouter;
