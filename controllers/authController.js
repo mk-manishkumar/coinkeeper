@@ -1,8 +1,10 @@
-import User from "../models/user.model.js";
+import User from "../models/User.model.js";
+import Guest from "../models/Guest.model.js";
 import jwt from "jsonwebtoken";
 import { userRegisterSchema } from "../utils/zodValidation.js";
 import { hashPassword, comparePassword } from "../utils/passwordBcrypt.js";
 import { z } from "zod";
+import { nanoid } from "nanoid";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -23,8 +25,9 @@ export const register = async (req, res) => {
     const newUser = new User({ username, fullname, password: hashedPassword });
     await newUser.save();
 
-    const token = jwt.sign({ username: newUser.username, id: newUser._id }, JWT_SECRET, { expiresIn: "30d" });
-    res.cookie("token", token, { httpOnly: true });
+    const token = jwt.sign({ username: newUser.username, id: newUser._id, role: "user" }, JWT_SECRET, { expiresIn: "30d" });
+
+    res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 }); 
 
     return res.status(201).redirect(`/profile/${newUser.username}`);
   } catch (error) {
@@ -121,5 +124,27 @@ export const logout = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).render("error");
+  }
+};
+
+// Guest sign-in logic
+export const guestSignIn = async (req, res) => {
+  try {
+    const username = nanoid();
+    const password = Math.random().toString(36).substring(2, 6);
+
+    const hashedPassword = await hashPassword(password);
+
+    const guestUser = new Guest({ username, password: hashedPassword });
+    await guestUser.save();
+
+    const token = jwt.sign({ username: guestUser.username, id: guestUser._id, role: "guest" }, GUEST_JWT_SECRET, { expiresIn: "10m" });
+
+    res.cookie("token", token, { httpOnly: true, maxAge: 10 * 60 * 1000 });
+
+    return res.status(201).redirect(`/profile/${guestUser.username}`);
+  } catch (err) {
+    console.error("Error signing in as guest:", err);
+    return res.status(500).render("error", { message: "Internal Server Error" });
   }
 };
