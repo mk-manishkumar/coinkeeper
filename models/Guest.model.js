@@ -9,12 +9,4 @@ const guestSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, expires: "10m" },
 });
 
-// Hash password before saving guest
-guestSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});
-
 export default mongoose.model("Guest", guestSchema);
