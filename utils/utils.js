@@ -1,5 +1,5 @@
-import userModel from "../models/user.model.js";
-import amountModel from "../models/amount.model.js";
+import userModel from "../models/User.model.js";
+import amountModel from "../models/Amount.model.js";
 
 // Get background color for each expense type
 export function getBackgroundColor(expenseType) {
