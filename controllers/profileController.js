@@ -1,5 +1,5 @@
-import Amount from "../models/amount.model.js";
-import User from "../models/user.model.js";
+import Amount from "../models/Amount.model.js";
+import User from "../models/User.model.js";
 import { getBackgroundColor, calculateTotals, monthYear } from "../utils/utils.js";
 import { comparePassword } from "../utils/passwordBcrypt.js";
 
