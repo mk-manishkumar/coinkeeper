@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
 
 const guestSchema = new mongoose.Schema({
   username: { type: String, unique: true },

@@ -1,5 +1,6 @@
 import userModel from "../models/User.model.js";
 import amountModel from "../models/Amount.model.js";
+import Guest from "../models/Guest.model.js";
 
 // Get background color for each expense type
 export function getBackgroundColor(expenseType) {
@@ -85,3 +86,22 @@ export function monthYear() {
     console.log(error);
   }
 }
+
+// role selection
+export const getUserForRole = async (role, username) => {
+  if (role === "guest") {
+    return await Guest.findOne({ username });
+  } else {
+    return await userModel.findOne({ username });
+  }
+};
+
+// validation for EJS
+export const guestRestrictions = (req, res, next) => {
+  if (req.user && req.user.role === "guest") {
+    res.locals.guestMode = true; // Make guestMode available in all EJS templates
+  } else {
+    res.locals.guestMode = false; // Explicitly set false for non-guest users
+  }
+  next();
+};

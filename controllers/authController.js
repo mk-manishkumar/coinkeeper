@@ -7,6 +7,7 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const GUEST_JWT_SECRET = process.env.GUEST_JWT_SECRET;
 
 // registering new account
 export const register = async (req, res) => {

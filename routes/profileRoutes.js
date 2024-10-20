@@ -1,10 +1,12 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/middleware.js";
 import { displayProfile, addAmount, deleteExpense, deleteAllExpenses, deleteAccount } from "../controllers/profileController.js";
+import { guestRestrictions } from "../utils/utils.js";
 
 const profileRouter = express.Router();
 
 profileRouter.use(authMiddleware);
+profileRouter.use(guestRestrictions);
 
 // route for displaying profile
 profileRouter.get("/:username", displayProfile);

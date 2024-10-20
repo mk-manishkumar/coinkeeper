@@ -1,15 +1,16 @@
 import Amount from "../models/Amount.model.js";
 import User from "../models/User.model.js";
-import { getBackgroundColor, calculateTotals, monthYear } from "../utils/utils.js";
+import { getBackgroundColor, calculateTotals, monthYear, getUserForRole } from "../utils/utils.js";
 import { comparePassword } from "../utils/passwordBcrypt.js";
 
 // display profile
 export const displayProfile = async (req, res) => {
   try {
-    const username = req.username;
+    const username = req.user?.username;
+    const role = req.user?.role || "user";
 
-    const user = await User.findOne({ username });
-    if (!user) res.send("User doesn't exist");
+    const user = await getUserForRole(role, username);
+    if (!user) return res.send("User doesn't exist");
 
     const expenses = await Amount.find({ user: user._id });
 
@@ -18,7 +19,7 @@ export const displayProfile = async (req, res) => {
     const totals = calculateTotals(expenses);
 
     return res.status(200).render("profile", {
-      fullname: user.fullname,
+      fullname: user.fullname || user.name, // Fallback for guest users
       expenses,
       getBackgroundColor,
       monthYear: monthYear(),
@@ -37,12 +38,13 @@ export const displayProfile = async (req, res) => {
 // add amount
 export const addAmount = async (req, res) => {
   try {
-    const username = req.username;
+    const username = req.user?.username;
+    const role = req.user?.role || "user";
 
     const { description, amount, expense } = req.body;
 
-    const user = await User.findOne({ username });
-    if (!user) res.send("User doesn't exist");
+    const user = await getUserForRole(role, username);
+    if (!user) return res.send("User doesn't exist");
 
     if (expense === undefined) {
       req.flash("error", "Please select type of expense");
@@ -81,11 +83,12 @@ export const addAmount = async (req, res) => {
 // delete single expense
 export const deleteExpense = async (req, res) => {
   try {
-    const username = req.username;
+    const username = req.user?.username;
+    const role = req.user?.role || "user";
     const expenseId = req.params.expenseId;
 
-    const user = await User.findOne({ username });
-    if (!user) res.send("User doesn't exist");
+    const user = await getUserForRole(role, username);
+    if (!user) return res.send("User doesn't exist");
 
     const expense = await Amount.findById(expenseId);
     if (!expense) return res.status(404).send("Expense not found");
@@ -104,9 +107,10 @@ export const deleteExpense = async (req, res) => {
 // delete all expenses
 export const deleteAllExpenses = async (req, res) => {
   try {
-    const username = req.username;
+    const username = req.user?.username;
+    const role = req.user?.role || "user";
 
-    const user = await User.findOne({ username });
+    const user = await getUserForRole(role, username);
     if (!user) return res.status(404).send("User doesn't exist");
 
     const expenses = await Amount.find({ user: user._id });
@@ -127,20 +131,16 @@ export const deleteAllExpenses = async (req, res) => {
 export const deleteAccount = async (req, res) => {
   try {
     const { password } = req.body;
-    const username = req.username;
+    const username = req.user?.username;
+    const role = req.user?.role || "user";
 
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
+    const user = await getUserForRole(role, username);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
     const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: "Incorrect password" });
 
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Incorrect password" });
-    }
-
+    await Amount.deleteMany({ user: user._id });
     await User.deleteOne({ username });
     res.clearCookie("token");
 

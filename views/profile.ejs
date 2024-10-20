@@ -24,7 +24,7 @@
               <button type="submit">Log Out</button>
             </form>
             <form id="deleteAccountForm" class="delete-account">
-              <button type="button" onclick="confirmDeleteAccount()">Delete Account</button>
+              <button type="button" class="delete-account-btn <% if (guestMode) { %> disabled-btn <% } %>" <% if (guestMode) { %>disabled title="Not available for guest users" <% } else { %> onclick="confirmDeleteAccount()" <% } %> > Delete Account</button>
             </form>
           </div>
         </div>

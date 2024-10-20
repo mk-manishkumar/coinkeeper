@@ -20,8 +20,7 @@ export function authMiddleware(req, res, next) {
     const decodedValue = jwt.verify(token, JWT_SECRET);
 
     if (decodedValue.username) {
-      req.username = decodedValue.username;
-      req.role = "user";
+      req.user = { username: decodedValue.username, role: "user" };
       next();
     } else {
       res.status(403).json({ message: "You are not authenticated" });
@@ -31,10 +30,11 @@ export function authMiddleware(req, res, next) {
     try {
       const decodedGuestValue = jwt.verify(token, GUEST_JWT_SECRET);
 
-      req.username = decodedGuestValue.username;
-      req.role = "guest";
+      req.user = { username: decodedGuestValue.username, role: "guest" };
+
       next();
     } catch (guestError) {
+      // If guest token verification also fails, return an error
       res.status(401).json({ message: "Unauthorized - Invalid token" });
     }
   }

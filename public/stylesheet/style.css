@@ -71,13 +71,19 @@
   user-select: none;
 }
 
-.delete-account button{
+.delete-account button {
   margin-top: 1rem;
 }
 
-.delete-account button:hover{
+.delete-account button:hover {
   background-color: rgb(252, 5, 5);
   border: none;
+}
+
+.disabled-btn {
+  background-color: #cccccc; /* Gray background for disabled state */
+  color: #666666;
+  cursor: not-allowed;
 }
 
 .log-out button:hover {
