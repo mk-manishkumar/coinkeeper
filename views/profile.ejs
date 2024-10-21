@@ -9,7 +9,7 @@
     <script src="/javascript/script.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
-  <body>
+  <body data-guest-mode="<%= guestMode %>">
     <div class="container">
       <!-- left side -->
       <div class="left-side">
@@ -24,7 +24,7 @@
               <button type="submit">Log Out</button>
             </form>
             <form id="deleteAccountForm" class="delete-account">
-              <button type="button" class="delete-account-btn <% if (guestMode) { %> disabled-btn <% } %>" <% if (guestMode) { %>disabled title="Not available for guest users" <% } else { %> onclick="confirmDeleteAccount()" <% } %> > Delete Account</button>
+              <button type="button" class="<% if (guestMode) { %> disabled-btn <% } %>" <% if (guestMode) { %>disabled title="Not available for guest users" <% } else { %> onclick="confirmDeleteAccount()" <% } %> > Delete Account</button>
             </form>
           </div>
         </div>

@@ -81,9 +81,10 @@
 }
 
 .disabled-btn {
-  background-color: #cccccc; /* Gray background for disabled state */
-  color: #666666;
-  cursor: not-allowed;
+  background-color: #cccccc !important; 
+  color: #666666 !important;
+  cursor: not-allowed !important;
+  border: 2px solid #cccccc !important;
 }
 
 .log-out button:hover {

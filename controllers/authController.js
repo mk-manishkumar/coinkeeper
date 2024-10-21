@@ -28,7 +28,7 @@ export const register = async (req, res) => {
 
     const token = jwt.sign({ username: newUser.username, id: newUser._id, role: "user" }, JWT_SECRET, { expiresIn: "30d" });
 
-    res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 }); 
+    res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
 
     return res.status(201).redirect(`/profile/${newUser.username}`);
   } catch (error) {

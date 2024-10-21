@@ -25,7 +25,7 @@ async function confirmDeleteAccount() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ password }), 
+        body: JSON.stringify({ password }),
       });
 
       // Check if the response is OK (status in the range 200-299)
@@ -36,15 +36,27 @@ async function confirmDeleteAccount() {
       const data = await response.json();
 
       if (data.success) {
-        window.location.href = "/"; 
+        window.location.href = "/";
       } else {
         alert("Password incorrect. Account not deleted.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while trying to delete the account."); 
+      alert("An error occurred while trying to delete the account.");
     }
   } else {
-    alert("Password is required to delete the account."); 
+    alert("Password is required to delete the account.");
   }
 }
+
+// This script will automatically log the guest out after 10 minutes
+window.onload = function () {
+  const guestMode = document.body.getAttribute("data-guest-mode") === "true";
+
+  if (guestMode) {
+    setTimeout(function () {
+      alert("Your session as a guest has expired. You will now be logged out.");
+      window.location.href = "/";
+    }, 10 * 60 * 1000);
+  }
+};
