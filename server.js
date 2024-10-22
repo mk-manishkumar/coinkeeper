@@ -14,6 +14,10 @@ const port = process.env.PORT || 3000;
 import connectDB from "./config/db.js";
 connectDB();
 
+// Import the job scheduler
+import { scheduleUserDeletionJob } from "./utils/utils.js";
+scheduleUserDeletionJob();
+
 // Get the current directory for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,6 +1,7 @@
 import userModel from "../models/User.model.js";
 import amountModel from "../models/Amount.model.js";
 import Guest from "../models/Guest.model.js";
+import cron from "node-cron";
 
 // Get background color for each expense type
 export function getBackgroundColor(expenseType) {
@@ -45,34 +46,6 @@ export function calculateTotals(expenses) {
   };
 }
 
-// Helper function to render profile with error
-export async function renderProfileWithError(res, username, errorMessage) {
-  try {
-    const user = await userModel.findOne({ username });
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const expenses = await amountModel.find({ user: user._id });
-    const totals = calculateTotals(expenses);
-    const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
-
-    res.render("index", {
-      expenses,
-      totalAmount,
-      getBackgroundColor,
-      savingsTotal: totals.savingsTotal,
-      expenditureTotal: totals.expenditureTotal,
-      investmentTotal: totals.investmentTotal,
-      fullname: user.fullname,
-      errorMessage,
-    });
-  } catch (error) {
-    console.error("Error rendering profile:", error);
-    res.status(500).send("Internal Server Error");
-  }
-}
-
 // to display month and year
 export function monthYear() {
   try {
@@ -104,4 +77,28 @@ export const guestRestrictions = (req, res, next) => {
     res.locals.guestMode = false; // Explicitly set false for non-guest users
   }
   next();
+};
+
+// Schedule job to delete inactive users
+export const scheduleUserDeletionJob = () => {
+  cron.schedule("0 0 * * *", async () => {
+    try {
+      const currentDate = new Date();
+      const hundredDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 100));
+
+      const inactiveUsers = await userModel.find({
+        role: { $ne: "guest" },
+        lastLogin: { $lt: hundredDaysAgo },
+      });
+
+      if (inactiveUsers.length > 0) {
+        for (const user of inactiveUsers) {
+          await userModel.findByIdAndDelete(user._id);
+          console.log(`Deleted user: ${user.username}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting inactive users:", error);
+    }
+  });
 };

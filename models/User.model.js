@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
         ref: "Amount",
       },
     ],
+    lastLogin: {
+      type: Date,
+      default: Date.now, 
+    },
   },
   {
     timestamps: true,

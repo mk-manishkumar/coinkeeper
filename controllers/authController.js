@@ -85,6 +85,10 @@ export const login = async (req, res) => {
       return res.status(400).redirect("/login");
     }
 
+    // Update lastLogin field for the user
+    user.lastLogin = Date.now();
+    await user.save();
+
     const token = jwt.sign({ username: user.username, id: user._id }, JWT_SECRET, { expiresIn: "30d" });
     res.cookie("token", token, { httpOnly: true });
 
