@@ -9,25 +9,28 @@ This web application is live. [Click here](https://coinkeeper-ngmb.onrender.com/
 
 ## Features
 
-- User registration and login
+- User registration and login with secure authentication
 - Add, view, and delete expenses
-- View total expenses by category (Savings, Expenditure, Investment)
+- Categorize expenses into Savings, Expenditure, and Investment
+- View total expenses by category for better financial insights
 
 ## Technologies Used
 
-- Node.js
-- Express.js
-- MongoDB (with Mongoose)
-- EJS (Embedded JavaScript templates)
-- Bootstrap (for styling)
-- bcrypt (for password hashing)
-- jsonwebtoken (for authentication)
+- `Node.js`: Backend runtime environment
+- `Express.js`: Web framework for routing and middleware
+- `MongoDB (with Mongoose)`: NoSQL database for storing user and expense data
+- `EJS`: Embedded JavaScript templates for rendering dynamic views
+- `Bootstrap`: Frontend framework for responsive design
+- `bcrypt`: Library for secure password hashing
+- `jsonwebtoken`: JWT-based authentication for sessions
+- `node-cron`: Scheduler for automated tasks like deleting inactive users
+- `connect-flash`: Middleware for displaying temporary flash messages (e.g., success or error notifications)
 
 ## Prerequisites
 
 - Node.js and npm installed
 - MongoDB installed and running
-- Environment variables set up
+- Set up environment variables
 
 ## Installation
 
@@ -51,10 +54,13 @@ npm install
 Create a `.env` file in the root directory and add the following variables:
 
 ```
-JWT_SECRET=your_jwt_secret
-MONGO_URI=your_mongo_connection_string
-PORT = your_port
-SECRET_KEY = your_secret_key
+JWT_SECRET=""
+MONGODB_URI=""
+PORT=""
+SESSION_SECRET_KEY=""
+GUEST_JWT_SECRET=""
+
+
 ```
 
 4. Run the application:
@@ -70,55 +76,80 @@ npm start
 
 ### Register
 
-1. Navigate to http://localhost:your_port/register.
+1. Navigate to http://localhost:your_port.
 2. Fill out the registration form and submit.
 
 ### Login
-1. Navigate to http://localhost:your_port.
+1. Navigate to http://localhost:your_port/login.
 2. Fill out the login form and submit.
    
 ### Profile
-1. After logging in, you will be redirected to the profile page.
+1. After logging in, you will be redirected to your profile page.
 2. Add expenses by selecting the expense type, entering a description, and amount.
 3. View your total expenses by category.
 4. Clear all expenses using the "Clear All" (`x`) button.
    
 ### Logout
 
-1. Click the` Log Out` button to log out of your account.
+- Click the` Log Out` button to log out of your account.
+
+### Delete Account
+
+- Click the` Delete Account` button to delete your account permanently. Deleting your account will remove all your data, including expenses, permanently from the system.
+- 
 
 ## Project Structure
 
 ```
-├── public
-│   ├── script.js
-│   └── style.css
+├── config
+│   └── db.js
 ├── controllers
-│   └── controller.js
-├── views
-│   ├── index.ejs
-│   ├── login.ejs
-│   └── register.ejs
-├── .env
-├── .gitignore
-├── README.md
-├── package.json
-├── server.js
-├── utils
-│   └── utils.js
+│   ├── authController.js
+│   └── profileController.js
 ├── middlewares
 │   └── middleware.js
-└── models
-    ├── amount.model.js
-    └── user.model.js
+├── models
+│   ├── Amount.model.js
+│   ├── Guest.model.js
+│   └── User.model.js
+├── public
+│   ├── javascript
+│   │   └── script.js
+│   └── stylesheet
+│       └── style.css
+├── routes
+│   ├── authRoutes.js
+│   └── profileRoutes.js
+├── utils
+│   ├── passwordBcrypt.js
+│   ├── utils.js
+│   └── zodValidation.js
+├── views
+│   ├── 404.ejs
+│   ├── error.ejs
+│   ├── login.ejs
+│   ├── profile.ejs
+│   └── register.ejs
+├── .env
+├── .env.sample
+├── .gitignore
+├── LICENSE
+├── README.md
+├── package-lock.json
+├── package.json
+└── server.js
+
 ```
 
+- **config**: Contains the database connection setup.
 - **public**: Contains static assets such as CSS and JavaScript files.
 - **controllers**: Contains the route handlers for the application.
 - **views**: Contains the EJS templates for rendering HTML.
-- **utils**: Contains utility functions used throughout the application.
+- **utils**: Contains utility functions used throughout the application, such as password hashing and validation.
 - **middlewares**: Contains middleware functions such as authentication.
-- **models**: Contains Mongoose models for interacting with the MongoDB database.
+- **models**: Contains Mongoose models for interacting with the MongoDB database, including User, Guest, and Amount models.
+- **routes**: Contains route definitions for authentication and profile-related actions.
+
 
 ## Contributing
 

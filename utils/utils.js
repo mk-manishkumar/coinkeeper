@@ -87,8 +87,8 @@ export const scheduleUserDeletionJob = () => {
       const hundredDaysAgo = new Date(currentDate.setDate(currentDate.getDate() - 100));
 
       const inactiveUsers = await userModel.find({
-        role: { $ne: "guest" },
-        lastLogin: { $lt: hundredDaysAgo },
+        role: { $ne: "guest" }, //$ne (not equal): This operator filters out documents that match the specified value.it's effectively saying: "Find all users who are not guests."
+        lastLogin: { $lt: hundredDaysAgo }, //$lt operator stands for "less than" in MongoDB queries. It is used to filter documents where the value of a field is less than the specified value.
       });
 
       if (inactiveUsers.length > 0) {
