@@ -1,0 +1,12 @@
+.scrollbar-expenselist::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-expenselist::-webkit-scrollbar-thumb {
+  background-color: #8b919b;
+  border-radius: 9999px;
+}
+
+.scrollbar-expenselist::-webkit-scrollbar-track {
+  background-color: transparent;
+}
