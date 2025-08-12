@@ -100,6 +100,8 @@ npm start
 
 ## Project Structure
 
+### Backend Structure
+
 ```
 ├── config
 │   └── db.js
@@ -112,24 +114,14 @@ npm start
 │   ├── Amount.model.js
 │   ├── Guest.model.js
 │   └── User.model.js
-├── public
-│   ├── javascript
-│   │   └── script.js
-│   └── stylesheet
-│       └── style.css
 ├── routes
 │   ├── authRoutes.js
 │   └── profileRoutes.js
 ├── utils
+│   ├── cronjob.js
 │   ├── passwordBcrypt.js
-│   ├── utils.js
+│   ├── roles.js
 │   └── zodValidation.js
-├── views
-│   ├── 404.ejs
-│   ├── error.ejs
-│   ├── login.ejs
-│   ├── profile.ejs
-│   └── register.ejs
 ├── .env
 ├── .env.sample
 ├── .gitignore
@@ -142,7 +134,6 @@ npm start
 ```
 
 - **config**: Contains the database connection setup.
-- **public**: Contains static assets such as CSS and JavaScript files.
 - **controllers**: Contains the route handlers for the application.
 - **views**: Contains the EJS templates for rendering HTML.
 - **utils**: Contains utility functions used throughout the application, such as password hashing and validation.
@@ -150,6 +141,12 @@ npm start
 - **models**: Contains Mongoose models for interacting with the MongoDB database, including User, Guest, and Amount models.
 - **routes**: Contains route definitions for authentication and profile-related actions.
 
+<hr>
+
+### Frontend Structure
+
+
+<hr>
 
 ## Contributing
 
