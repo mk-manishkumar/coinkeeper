@@ -3,13 +3,27 @@ import UserModel from "../models/User.model.js";
 import AmountModel from "../models/Amount.model.js";
 import GuestModel from "../models/Guest.model.js";
 
+// Utility function for logging only in development
+const devLog = (...args) => {
+  if (process.env.NODE_ENV === "development") {
+    console.log(...args);
+  }
+};
+
+// Utility function for error logging only in development
+const devError = (...args) => {
+  if (process.env.NODE_ENV === "development") {
+    console.error(...args);
+  }
+};
+
 export const scheduleUserDeletionJob = () => {
   /**
    * 1️⃣ DAILY JOB — DELETE INACTIVE NON-GUEST USERS
    */
   cron.schedule("0 0 * * *", async () => {
     try {
-      console.log("Daily cleanup: Deleting inactive users (non-guests) ...");
+      devLog("Daily cleanup: Deleting inactive users (non-guests) ...");
 
       const now = new Date();
       const hundredDaysAgo = new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000);
@@ -26,12 +40,12 @@ export const scheduleUserDeletionJob = () => {
         });
 
         await UserModel.findByIdAndDelete(user._id);
-        console.log(`Deleted inactive user: ${user.username}, deleted ${deletedAmounts.deletedCount} expenses`);
+        devLog(`Deleted inactive user: ${user.username}, deleted ${deletedAmounts.deletedCount} expenses`);
       }
 
-      console.log("Daily inactive user cleanup finished.");
+      devLog("Daily inactive user cleanup finished.");
     } catch (error) {
-      console.error("Error cleaning inactive users:", error);
+      devError("Error cleaning inactive users:", error);
     }
   });
 
@@ -40,7 +54,7 @@ export const scheduleUserDeletionJob = () => {
    */
   cron.schedule("*/5 * * * *", async () => {
     try {
-      console.log("Frequent cleanup: Deleting expired guests...");
+      devLog("Frequent cleanup: Deleting expired guests...");
 
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
@@ -62,10 +76,10 @@ export const scheduleUserDeletionJob = () => {
         totalDeletedGuests++;
         totalDeletedExpenses += deletedAmounts.deletedCount;
 
-        console.log(`Deleted expired guest: ${guest.username}, deleted ${deletedAmounts.deletedCount} expenses`);
+        devLog(`Deleted expired guest: ${guest.username}, deleted ${deletedAmounts.deletedCount} expenses`);
       }
 
-      console.log(`Expired guest cleanup finished. Deleted ${totalDeletedGuests} guests and ${totalDeletedExpenses} expenses.`);
+      devLog(`Expired guest cleanup finished. Deleted ${totalDeletedGuests} guests and ${totalDeletedExpenses} expenses.`);
 
       const allOrphanedExpenses = await AmountModel.find({});
       let orphanedCount = 0;
@@ -88,10 +102,10 @@ export const scheduleUserDeletionJob = () => {
       }
 
       if (orphanedCount > 0) {
-        console.log(`Cleaned up ${orphanedCount} total orphaned expenses`);
+        devLog(`Cleaned up ${orphanedCount} total orphaned expenses`);
       }
     } catch (error) {
-      console.error("Error cleaning guests:", error);
+      devError("Error cleaning guests:", error);
     }
   });
 };

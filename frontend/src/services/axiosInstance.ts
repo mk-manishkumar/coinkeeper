@@ -2,8 +2,8 @@ import axios from "axios";
 import { store } from "@/store/store";
 
 export const instance = axios.create({
-  baseURL: "http://localhost:3005/api/v1",
-  withCredentials: true, // send cookies 
+  baseURL: import.meta.env.VITE_BACKEND_API,
+  withCredentials: true,  
 });
 
 // Automatically attach token if available
