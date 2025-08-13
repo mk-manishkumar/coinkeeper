@@ -3,6 +3,7 @@ import User from "../models/User.model.js";
 import Guest from "../models/Guest.model.js";
 import { getUserForRole } from "../utils/roles.js";
 import { comparePassword } from "../utils/passwordBcrypt.js";
+import { devLog } from "../utils/consoleLogHelper.js";
 
 // Display user profile and expenses
 export const displayProfile = async (req, res) => {
@@ -24,7 +25,7 @@ export const displayProfile = async (req, res) => {
       expenses,
     });
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -72,7 +73,7 @@ export const addAmount = async (req, res) => {
 
     return res.status(201).json({ message: "Expense added successfully" });
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -107,7 +108,7 @@ export const deleteExpense = async (req, res) => {
 
     return res.status(200).json({ message: "Expense deleted successfully" });
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -143,7 +144,7 @@ export const deleteAllExpenses = async (req, res) => {
 
     return res.status(200).json({ message: "All expenses deleted successfully" });
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -176,7 +177,7 @@ export const deleteAccount = async (req, res) => {
 
     return res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };

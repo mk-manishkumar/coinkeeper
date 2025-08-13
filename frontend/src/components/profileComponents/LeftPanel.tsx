@@ -10,6 +10,13 @@ import { ShowModal } from "./ShowModal";
 import axios from "axios";
 import { logoutUser } from "@/services/authService";
 
+const isDevelopment = import.meta.env.VITE_NODE_ENV === "development";
+const logError = (message: string, error: unknown) => {
+  if (isDevelopment) {
+    console.error(message, error);
+  }
+};
+
 export const LeftPanel = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -27,8 +34,7 @@ export const LeftPanel = () => {
       const response = await getProfile(auth.username);
       dispatch(setProfileData(response.data));
     } catch (error) {
-      console.error("Error fetching profile:", error);
-
+      logError("Error fetching profile:", error);
       if (axios.isAxiosError(error)) {
         if ((error.response?.status === 404 || error.response?.status === 401) && auth?.role === "guest") {
           toast.info("Your guest session has expired. Please register to continue.");
@@ -43,7 +49,6 @@ export const LeftPanel = () => {
       }
     }
   }, [auth?.username, auth?.role, dispatch, navigate]);
-
 
   useEffect(() => {
     fetchProfile();
@@ -63,7 +68,7 @@ export const LeftPanel = () => {
     try {
       await logoutUser();
     } catch (error) {
-      console.error("Logout request failed:", error);
+      logError("Logout request failed:", error);
     } finally {
       dispatch(clearUser());
       dispatch(clearProfile());

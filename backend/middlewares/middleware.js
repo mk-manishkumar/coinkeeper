@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { devLog } from "../utils/consoleLogHelper.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const GUEST_JWT_SECRET = process.env.GUEST_JWT_SECRET;
@@ -36,7 +37,7 @@ export const authMiddleware = (req, res, next) => {
       return res.status(403).json({ message: "You are not authenticated" });
     }
   } catch (error) {
-    console.error("JWT Verification Failed:", error.message);
+    devLog(error);
     return res.status(401).json({ message: "Unauthorized - Invalid token", error: error.message });
   }
 }

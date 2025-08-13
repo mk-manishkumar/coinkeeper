@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import morgan from "morgan";
 import { scheduleUserDeletionJob } from "./utils/cronjob.js";
+import { devLog } from "./utils/consoleLogHelper.js";
 
 // Import routes
 import authRouter from "./routes/authRoutes.js";
@@ -46,7 +47,7 @@ app.use((req, res, next) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("Error:", err.stack);
+  devLog(error);
   res.status(500).json({ message: "Internal Server Error" });
 });
 

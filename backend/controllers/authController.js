@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { userRegisterSchema } from "../utils/zodValidation.js";
 import { hashPassword, comparePassword } from "../utils/passwordBcrypt.js";
 import { nanoid } from "nanoid";
+import { devLog } from "../utils/consoleLogHelper.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const GUEST_JWT_SECRET = process.env.GUEST_JWT_SECRET;
@@ -30,7 +31,7 @@ export const register = async (req, res) => {
     if (error.name === "ZodError") {
       return res.status(400).json({ message: error.errors.map((e) => e.message).join(", ") });
     }
-    console.error(error);
+    devLog(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -57,7 +58,7 @@ export const login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    devLog(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -111,7 +112,7 @@ export const checkAuth = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    devLog(error);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -130,7 +131,7 @@ export const guestSignIn = async (req, res) => {
     const token = jwt.sign({ username: guestUser.username, id: guestUser._id, role: "guest" }, GUEST_JWT_SECRET, { expiresIn: "10m" });
     res.status(201).json({ token });
   } catch (error) {
-    console.error("Error signing in as guest:", error);
+    devLog(error);
     res.status(500).json({ message: "Server error" });
   }
 };

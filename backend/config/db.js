@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { devLog } from "../utils/consoleLogHelper.js";
 
 const connectDB = async () => {
   try {
@@ -8,7 +9,7 @@ const connectDB = async () => {
 
     console.log(`MongoDB Connected`);
   } catch (err) {
-    console.error(`Error: ${err.message}`);
+    devLog(`Error: ${err.message}`);
     process.exit(1);
   }
 };
