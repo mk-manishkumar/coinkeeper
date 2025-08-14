@@ -1,157 +1,236 @@
 # CoinKeeper
 
-CoinKeeper is an expense-tracking web application designed to help you keep track of your finances. With CoinKeeper, you can easily monitor your expenses, categorize them, and gain insights into your spending habits.
+**CoinKeeper** is a full-stack MERN application for personal finance management. Users can register, log in, track expenses, manage savings, and visualize their financial data. The project is split into a React + TypeScript frontend and a Node.js + Express + MongoDB backend.
 
-# Deployment
+---
 
-This web application is live. [Click here](https://coinkeeper-ngmb.onrender.com/)
+## Deployed Link
 
+Both frontend & backend are deployed on Vercel. For live project, [Click here](https://coinkeeper-mk.vercel.app)
+
+----
+
+## Table of Contents
+
+- [CoinKeeper](#coinkeeper)
+  - [Deployed Link](#deployed-link)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Project Structure](#project-structure)
+  - [Frontend (`frontend/`)](#frontend-frontend)
+  - [Backend (`backend/`)](#backend-backend)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Environment Variables](#environment-variables)
+      - [Backend](#backend)
+      - [Frontend](#frontend)
+    - [Installation](#installation)
+      - [Backend](#backend-1)
+      - [Frontend](#frontend-1)
+    - [Running Locally](#running-locally)
+      - [1. Start MongoDB](#1-start-mongodb)
+      - [2. Start Backend](#2-start-backend)
+      - [3. Start Frontend](#3-start-frontend)
+  - [Deployment](#deployment)
+  - [API Endpoints](#api-endpoints)
+    - [Auth](#auth)
+    - [Profile \& Expenses](#profile--expenses)
+  - [Scripts](#scripts)
+    - [Backend](#backend-2)
+    - [Frontend](#frontend-2)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
+
+---
 
 ## Features
 
-- User registration and login with secure authentication
+- User authentication (register, login, logout)
+- JWT-based session management
 - Add, view, and delete expenses
-- Categorize expenses into Savings, Expenditure, and Investment
-- View total expenses by category for better financial insights
+- Categorize expenses (Savings, Expenditure, Investment)
+- Expense statistics and visualization
+- Responsive UI with React and Tailwind CSS
+- Secure password hashing and validation
+- Modular, scalable codebase
+- **shadcn/ui** – For prebuilt, accessible, and customizable UI components.
 
-## Technologies Used
+---
 
-- `Node.js`: Backend runtime environment
-- `Express.js`: Web framework for routing and middleware
-- `MongoDB (with Mongoose)`: NoSQL database for storing user and expense data
-- `EJS`: Embedded JavaScript templates for rendering dynamic views
-- `Bootstrap`: Frontend framework for responsive design
-- `bcrypt`: Library for secure password hashing
-- `jsonwebtoken`: JWT-based authentication for sessions
-- `node-cron`: Scheduler for automated tasks like deleting inactive users
-- `connect-flash`: Middleware for displaying temporary flash messages (e.g., success or error notifications)
+## Tech Stack
 
-## Prerequisites
+* **Frontend:** React, TypeScript, Vite, Redux Toolkit, Axios, shadcn/ui
+* **Backend:** Node.js, Express, MongoDB, Mongoose
+* **Authentication:** JWT, bcrypt
+* **Validation:** Zod
+* **Deployment:** Vercel (config included)
 
-- Node.js and npm installed
-- MongoDB installed and running
-- Set up environment variables
-
-## Installation
-
-1. Clone the repository:
-
-```
-git clone https://github.com/yourusername/coinkeeper.git
-```
-
-```
-cd coinkeeper
-```
-2. Install dependencies:
-   
-```
-npm install
-```
-
-3. Set up environment variables:
-
-Create a `.env` file in the root directory and add the following variables:
-
-```
-JWT_SECRET=""
-MONGODB_URI=""
-PORT=""
-SESSION_SECRET_KEY=""
-GUEST_JWT_SECRET=""
-
-
-```
-
-4. Run the application:
-  
-```
-npm start
-````
-
-> The application will be available at `http://localhost:your_port.`
-
-
-## Usage
-
-### Register
-
-1. Navigate to http://localhost:your_port.
-2. Fill out the registration form and submit.
-
-### Login
-1. Navigate to http://localhost:your_port/login.
-2. Fill out the login form and submit.
-   
-### Profile
-1. After logging in, you will be redirected to your profile page.
-2. Add expenses by selecting the expense type, entering a description, and amount.
-3. View your total expenses by category.
-4. Clear all expenses using the "Clear All" (`x`) button.
-   
-### Logout
-
-- Click the` Log Out` button to log out of your account.
-
-### Delete Account
-
-- Click the` Delete Account` button to delete your account permanently. Deleting your account will remove all your data, including expenses, permanently from the system.
-- 
+---
 
 ## Project Structure
 
-### Backend Structure
+## Frontend (`frontend/`)
+
+- `public/` — Static assets  
+- `src/`  
+  - `components/` — React components  
+  - `lib/` — Utility functions  
+  - `pages/` — Page components  
+  - `services/` — API services  
+  - `store/` — Redux store & slices  
+- Static files: `vite.config.ts`, `.env.sample`  
+
+---
+
+## Backend (`backend/`)
+
+- `config/` — Database config  
+- `controllers/` — Route controllers  
+- `middlewares/` — Express middlewares  
+- `models/` — Mongoose models  
+- `routes/` — API routes  
+- `utils/` — Utility functions  
+- Static files: `server.js`, `.env.sample`
+
+
+---
+
+## Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- npm or yarn
+- [MongoDB](https://www.mongodb.com/) (local or Atlas)
+
+### Environment Variables
+
+#### Backend
+Copy `.env.sample` to `.env` in the `backend` folder and fill in your values:
+
+```bash
+cp backend/.env.sample backend/.env
+```
+
+- PORT=3005
+- MONGODB_URI=your_mongodb_connection_string
+- JWT_SECRET=your_jwt_secret
+- GUEST_JWT_SECRET=your_guest_jwt_secret
+- NODE_ENV=development
+- ALLOWED_ORIGINS=http://localhost:5173,
+
+#### Frontend
+
+Copy `.env.sample` to `.env` in the frontend folder and fill in your values:
 
 ```
-├── config
-│   └── db.js
-├── controllers
-│   ├── authController.js
-│   └── profileController.js
-├── middlewares
-│   └── middleware.js
-├── models
-│   ├── Amount.model.js
-│   ├── Guest.model.js
-│   └── User.model.js
-├── routes
-│   ├── authRoutes.js
-│   └── profileRoutes.js
-├── utils
-│   ├── cronjob.js
-│   ├── passwordBcrypt.js
-│   ├── roles.js
-│   └── zodValidation.js
-├── .env
-├── .env.sample
-├── .gitignore
-├── LICENSE
-├── README.md
-├── package-lock.json
-├── package.json
-└── server.js
-
+cp frontend/.env.sample frontend/.env
 ```
 
-- **config**: Contains the database connection setup.
-- **controllers**: Contains the route handlers for the application.
-- **views**: Contains the EJS templates for rendering HTML.
-- **utils**: Contains utility functions used throughout the application, such as password hashing and validation.
-- **middlewares**: Contains middleware functions such as authentication.
-- **models**: Contains Mongoose models for interacting with the MongoDB database, including User, Guest, and Amount models.
-- **routes**: Contains route definitions for authentication and profile-related actions.
-
-<hr>
-
-### Frontend Structure
+- VITE_BACKEND_API=http://localhost:3005
+- VITE_NODE_ENV=development
 
 
-<hr>
+
+
+
+### Installation
+
+#### Backend
+
+```bash
+cd backend
+npm install
+```
+
+#### Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+### Running Locally
+
+#### 1. Start MongoDB
+
+Make sure MongoDB is running locally or update your `.env` with your Atlas URI.
+
+#### 2. Start Backend
+
+```bash
+cd backend
+npm start
+```
+
+#### 3. Start Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+* **Frontend:** [http://localhost:5173](http://localhost:5173)
+* **Backend:** [http://localhost:3005](http://localhost:3005)
+
+
+----
+
+## Deployment
+
+- Both frontend and backend include `vercel.json` for deployment on [Vercel](https://vercel.com/).
+- Set environment variables in your Vercel dashboard for both projects.
+- For production, ensure CORS and secure cookie settings are properly configured.
+
+---
+
+## API Endpoints
+
+### Auth
+- `POST /api/v1/auth/register` — Register new user  
+- `POST /api/v1/auth/login` — Login user  
+- `GET /api/v1/auth/check-auth` — Check if user is authenticated  
+- `POST /api/v1/auth/logout` — Logout user  
+
+### Profile & Expenses
+- `GET /api/v1/profile/:username` — Get user profile and expenses  
+- `POST /api/v1/profile/addamount` — Add new expense  
+- `DELETE /api/v1/profile/deleteexpense/:id` — Delete expense by ID  
+- `DELETE /api/v1/profile/deleteallexpenses` — Delete all expenses  
+- `DELETE /api/v1/profile/deleteaccount` — Delete user account  
+
+---
+
+## Scripts
+
+### Backend
+- `npm start` — Start server  
+- `npm run dev` — Start server with nodemon  
+
+### Frontend
+- `npm run dev` — Start Vite dev server  
+- `npm run build` — Build for production  
+- `npm run preview` — Preview production build  
+
+---
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+1. Fork the repo  
+2. Create your feature branch (`git checkout -b feature/YourFeature`)  
+3. Commit your changes (`git commit -m 'Add some feature'`)  
+4. Push to the branch (`git push origin feature/YourFeature`)  
+5. Open a Pull Request  
+
+---
 
 ## License
 
-This project is licensed under the MIT [License](https://github.com/mk-manishkumar/coinkeeper/blob/main/LICENSE). See the LICENSE file for details.
+This project is licensed under the MIT License.
+
+---
+
+## Contact
+
+For questions or collaboration, reach out to me on [Twitter/x](https://x.com/_manishmk)
