@@ -8,8 +8,13 @@ import axios from "axios";
 import { useAppDispatch } from "../../store/hooks";
 import { setUser } from "@/store/authSlice";
 import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 export const Register = () => {
+    const user = useSelector((state: RootState) => state.auth.user);
+    const token = user?.token;
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [checking, setChecking] = useState(true);
@@ -21,22 +26,31 @@ export const Register = () => {
   });
 
   // Redirect if already logged in
-  useEffect(() => {
-    const checkIfLoggedIn = async () => {
-      try {
-        const res = await checkAuth();
-        if (res.status === 200) {
-          navigate(`/profile/${res.data.username}`, { replace: true });
-        } else {
-          setChecking(false);
-        }
-      } catch {
-        setChecking(false);
-      }
-    };
+ useEffect(() => {
+   if (!token) {
+     setChecking(false);
+     return;
+   }
 
-    checkIfLoggedIn();
-  }, [navigate]);
+   const checkIfLoggedIn = async () => {
+     try {
+       const res = await checkAuth();
+       if (res.status === 200) {
+         navigate(`/profile/${res.data.username}`, { replace: true });
+       } else {
+         setChecking(false);
+       }
+     } catch (err) {
+       if (axios.isAxiosError(err) && err.response?.status !== 401 && import.meta.env.VITE_NODE_ENV === "development") {
+         console.error(err);
+       }
+
+       setChecking(false);
+     }
+   };
+
+   checkIfLoggedIn();
+ }, [navigate, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput({ ...input, [e.target.name]: e.target.value });

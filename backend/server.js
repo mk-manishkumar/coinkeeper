@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  devLog(error);
+  devLog(err);
   res.status(500).json({ message: "Internal Server Error" });
 });
 
