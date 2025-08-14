@@ -7,8 +7,13 @@ import axios from "axios";
 import { checkAuth, loginUser } from "@/services/authService";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/authSlice";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 export const Login = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const token = user?.token;
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -17,10 +22,15 @@ export const Login = () => {
     password: "",
   });
 
-  const [checking, setChecking] = useState(true); 
+  const [checking, setChecking] = useState(true);
 
   // Redirect if already logged in
   useEffect(() => {
+    if (!token) {
+      setChecking(false);
+      return;
+    }
+
     const checkIfLoggedIn = async () => {
       try {
         const res = await checkAuth();
@@ -29,13 +39,17 @@ export const Login = () => {
         } else {
           setChecking(false);
         }
-      } catch {
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status !== 401 && import.meta.env.VITE_NODE_ENV === "development") {
+          console.error(err);
+        }
+
         setChecking(false);
       }
     };
 
     checkIfLoggedIn();
-  }, [navigate]);
+  }, [navigate, token]); 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput({ ...input, [e.target.name]: e.target.value });
